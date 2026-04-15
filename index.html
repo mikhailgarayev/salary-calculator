@@ -26,7 +26,6 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -38,7 +37,6 @@
     font-size: 15px;
   }
 
-  /* ─── GRID NOISE BACKGROUND ─── */
   body::before {
     content: '';
     position: fixed; inset: 0;
@@ -51,11 +49,11 @@
   .wrap {
     max-width: 960px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 20px 60px;
     position: relative; z-index: 1;
   }
 
-  /* ─── HEADER ─── */
+  /* HEADER */
   header {
     padding: 52px 0 32px;
     border-bottom: 1px solid var(--border);
@@ -101,10 +99,7 @@
     color: var(--text);
   }
 
-  h1 em {
-    font-style: normal;
-    color: var(--accent);
-  }
+  h1 em { font-style: normal; color: var(--accent); }
 
   .header-meta {
     display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
@@ -128,7 +123,6 @@
     border-bottom: 1px dashed var(--text-muted);
     transition: color 0.2s;
   }
-
   .az-calendar-link:hover { color: var(--accent2); }
 
   .subtitle {
@@ -138,7 +132,7 @@
     max-width: 540px;
   }
 
-  /* ─── SECTIONS ─── */
+  /* SECTION LABEL */
   .section-label {
     font-family: var(--mono);
     font-size: 11px;
@@ -156,7 +150,7 @@
     background: var(--border);
   }
 
-  /* ─── CARDS ─── */
+  /* CARD */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -164,53 +158,9 @@
     padding: 24px;
     transition: border-color 0.2s;
   }
-
   .card:hover { border-color: #ccc5ba; }
 
-  /* ─── INPUTS GRID ─── */
-  .inputs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-
-  .field {
-    display: flex; flex-direction: column; gap: 6px;
-  }
-
-  .field label {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-
-  .field input, .field select {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 15px;
-    padding: 10px 14px;
-    width: 100%;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    -webkit-appearance: none;
-  }
-
-  .field input:focus, .field select:focus {
-    border-color: var(--accent2);
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
-  }
-
-  .field select option { background: #fff; }
-
-  .field.wide { grid-column: span 2; }
-
-  /* ─── MONTHLY NORMS TABLE ─── */
+  /* MONTHLY NORMS */
   .norms-section { margin-bottom: 32px; }
 
   .norms-grid {
@@ -221,7 +171,6 @@
 
   @media (max-width: 600px) {
     .norms-grid { grid-template-columns: repeat(2, 1fr); }
-    .field.wide { grid-column: span 1; }
   }
 
   .month-card {
@@ -242,7 +191,6 @@
     position: absolute; inset: 0;
     background: rgba(200,134,10,0.06);
   }
-
   .month-card.past { opacity: 0.5; }
 
   .month-name {
@@ -258,9 +206,7 @@
     color: var(--text);
   }
 
-  .month-hours span {
-    font-size: 11px; color: var(--text-muted);
-  }
+  .month-hours span { font-size: 11px; color: var(--text-muted); }
 
   .month-flag {
     position: absolute; top: 8px; right: 8px;
@@ -271,7 +217,7 @@
     border-radius: 4px;
   }
 
-  /* ─── RESULTS ─── */
+  /* RESULTS */
   .results-row {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -287,45 +233,18 @@
     display: flex; flex-direction: column; gap: 4px;
   }
 
-  .result-box.highlight {
-    border-color: var(--accent);
-    background: rgba(200,134,10,0.07);
-  }
+  .result-box.highlight { border-color: var(--accent); background: rgba(200,134,10,0.07); }
+  .result-box.neg { border-color: rgba(220,38,38,0.25); background: rgba(220,38,38,0.04); }
+  .result-box.pos { border-color: rgba(22,163,74,0.3); background: rgba(22,163,74,0.05); }
 
-  .result-box.neg {
-    border-color: rgba(220,38,38,0.25);
-    background: rgba(220,38,38,0.04);
-  }
-
-  .result-box.pos {
-    border-color: rgba(22,163,74,0.3);
-    background: rgba(22,163,74,0.05);
-  }
-
-  .result-label {
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  .result-value {
-    font-family: var(--mono);
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
+  .result-label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+  .result-value { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--text); }
   .result-box.highlight .result-value { color: var(--accent); font-size: 24px; }
   .result-box.neg .result-value { color: var(--red); }
   .result-box.pos .result-value { color: var(--accent3); }
+  .result-sub { font-size: 11px; color: var(--text-muted); }
 
-  .result-sub {
-    font-size: 11px;
-    color: var(--text-muted);
-  }
-
-  /* ─── BREAKDOWN TABLE ─── */
+  /* BREAKDOWN TABLE — no formula column */
   .breakdown {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -334,37 +253,9 @@
     margin-bottom: 32px;
   }
 
-  .breakdown-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 11px 16px;
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-    gap: 12px;
-  }
-
-  .breakdown-row:last-child { border-bottom: none; }
-  .breakdown-row:hover { background: rgba(0,0,0,0.02); }
-  .breakdown-row.total { border-top: 1px solid var(--border); }
-
-  .breakdown-name { font-size: 13px; color: var(--text-dim); flex: 1; }
-  .breakdown-formula { font-family: var(--mono); font-size: 11px; color: var(--text-muted); }
-  .breakdown-val {
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-    text-align: right;
-    white-space: nowrap;
-  }
-  .breakdown-val.red { color: var(--red); }
-  .breakdown-val.green { color: var(--accent3); }
-  .breakdown-val.yellow { color: var(--accent); }
-
   .breakdown-header {
-    padding: 10px 16px;
-    background: rgba(0,0,0,0.02);
+    padding: 10px 20px;
+    background: rgba(0,0,0,0.025);
     font-size: 11px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -372,108 +263,40 @@
     border-bottom: 1px solid var(--border);
   }
 
-  /* ─── FORMULA AUDIT ─── */
-  .formula-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 10px;
-    margin-bottom: 32px;
-  }
-
-  .formula-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px 14px;
-  }
-
-  .formula-item-name {
-    font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
-    color: var(--text-muted); margin-bottom: 4px;
-  }
-
-  .formula-item-expr {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent2);
-    line-height: 1.5;
-  }
-
-  .formula-item-status {
-    margin-top: 6px;
-    font-size: 11px;
-    display: flex; align-items: center; gap: 5px;
-  }
-
-  .status-ok { color: var(--accent3); }
-  .status-warn { color: var(--accent); }
-
-  /* ─── FOOTER ─── */
-  footer {
-    margin-top: 60px;
-    padding: 28px 0;
-    border-top: 1px solid var(--border);
+  .breakdown-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
   }
 
-  footer p { font-size: 12px; color: var(--text-muted); }
-  footer a { color: var(--accent2); text-decoration: none; }
-  footer a:hover { text-decoration: underline; }
-
-  /* ─── ANIMATIONS ─── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-row:hover { background: rgba(0,0,0,0.018); }
+  .breakdown-row.total {
+    border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.015);
   }
 
-  .card, .results-row, .norms-section, .breakdown {
-    animation: fadeUp 0.4s ease both;
-  }
+  .breakdown-name { font-size: 13px; color: var(--text-dim); }
 
-  .card { animation-delay: 0.05s; }
-  .norms-section { animation-delay: 0.1s; }
-  .results-row { animation-delay: 0.15s; }
-  .breakdown { animation-delay: 0.2s; }
-
-  /* ─── DIVIDER ─── */
-  .divider {
-    height: 1px; background: var(--border);
-    margin: 32px 0;
-  }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 480px) {
-    .header-top { flex-direction: column; }
-    .header-meta { align-items: flex-start; }
-  }
-
-  .calc-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--accent);
-    color: #000;
-    border: none;
-    border-radius: var(--radius);
-    padding: 12px 24px;
-    font-family: var(--sans);
+  .breakdown-val {
+    font-family: var(--mono);
     font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-    letter-spacing: 0.02em;
-    margin-top: 16px;
+    font-weight: 500;
+    color: var(--text);
+    text-align: right;
   }
+  .breakdown-val.red { color: var(--red); }
+  .breakdown-val.green { color: var(--accent3); }
+  .breakdown-val.yellow { color: var(--accent); }
+  .breakdown-val.big { font-size: 18px; }
 
-  .calc-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(200,134,10,0.25);
-  }
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 32px 0; }
 
-  .calc-btn:active { transform: scale(0.98); }
-
+  /* NOTICE */
   .notice {
     background: rgba(37,99,235,0.06);
     border: 1px solid rgba(37,99,235,0.15);
@@ -485,7 +308,35 @@
     display: flex; gap: 8px;
   }
 
-  /* ─── TOP CARD FIELDS ─── */
+  /* FOOTER */
+  footer {
+    margin-top: 60px;
+    padding: 28px 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  footer p { font-size: 12px; color: var(--text-muted); }
+  footer a { color: var(--accent2); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card { animation: fadeUp 0.35s ease both 0.05s; }
+  .norms-section { animation: fadeUp 0.35s ease both 0.0s; }
+  .results-row { animation: fadeUp 0.35s ease both 0.1s; }
+  .breakdown { animation: fadeUp 0.35s ease both 0.15s; }
+
+  /* ── IMPROVED INPUTS ── */
+
+  /* Top two fields */
   .top-fields {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -495,20 +346,17 @@
 
   @media (max-width: 560px) { .top-fields { grid-template-columns: 1fr; } }
 
-  .float-field {
-    position: relative;
-  }
+  .float-field { position: relative; }
 
   .float-field label {
     position: absolute;
     top: 10px; left: 16px;
-    font-size: 11px;
-    letter-spacing: 0.07em;
+    font-size: 10px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-muted);
     font-weight: 600;
     pointer-events: none;
-    transition: none;
   }
 
   .float-field input,
@@ -523,7 +371,7 @@
     font-weight: 500;
     color: var(--text);
     outline: none;
-    transition: border-color 0.18s, box-shadow 0.18s;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
     -webkit-appearance: none;
   }
 
@@ -540,8 +388,59 @@
     cursor: default;
   }
 
-  /* ─── INPUT ROWS ─── */
-  .input-rows { display: flex; flex-direction: column; gap: 8px; }
+  /* Gross salary — full width */
+  .gross-field {
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .gross-field label {
+    position: absolute;
+    top: 12px; left: 20px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .gross-field input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 52px 12px 20px;
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    -webkit-appearance: none;
+    letter-spacing: -0.01em;
+  }
+
+  .gross-field input:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+    background: #fff;
+  }
+
+  .gross-field .currency-symbol {
+    position: absolute;
+    right: 20px;
+    bottom: 14px;
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  /* INPUT ROWS — improved */
+  .input-rows { display: flex; flex-direction: column; gap: 6px; }
 
   .input-row {
     display: flex;
@@ -551,6 +450,7 @@
     border-radius: var(--radius);
     overflow: hidden;
     transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    min-height: 58px;
   }
 
   .input-row:focus-within {
@@ -559,21 +459,13 @@
     background: #fff;
   }
 
-  .input-row-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-    padding: 0 0 0 18px;
-    min-height: 60px;
-  }
-
   .input-row-icon {
-    font-size: 18px;
-    width: 26px;
+    font-size: 17px;
+    width: 52px;
     text-align: center;
     flex-shrink: 0;
     line-height: 1;
+    color: var(--text-dim);
   }
 
   .input-row-label {
@@ -583,22 +475,101 @@
     flex: 1;
   }
 
-  .input-row-right {
+  /* Stepper control */
+  .input-row-control {
     display: flex;
     align-items: center;
     gap: 0;
     padding-right: 0;
     flex-shrink: 0;
+    border-left: 1px solid var(--border);
   }
 
-  .input-row-number {
+  .stepper-btn {
+    width: 40px;
+    height: 58px;
     display: flex;
     align-items: center;
+    justify-content: center;
     background: transparent;
-    padding: 0 4px 0 12px;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 18px;
+    font-weight: 300;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .input-row-input {
+  .stepper-btn:hover { background: rgba(0,0,0,0.04); color: var(--text); }
+  .stepper-btn:active { background: rgba(0,0,0,0.08); }
+
+  .stepper-btn.minus { border-right: 1px solid var(--border); }
+  .stepper-btn.plus { border-left: 1px solid var(--border); }
+
+  .stepper-input-wrap {
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+  }
+
+  .stepper-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--mono);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    width: 56px;
+    padding: 0;
+  }
+
+  /* hide native number spinners */
+  .stepper-input::-webkit-outer-spin-button,
+  .stepper-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .stepper-input[type=number] { -moz-appearance: textfield; }
+
+  .stepper-unit {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    padding-right: 4px;
+  }
+
+  /* result pill at right end */
+  .row-result-pill {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 110px;
+    padding: 0 16px;
+    border-left: 1px solid var(--border);
+    height: 58px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent3);
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+
+  .row-result-pill.zero { color: var(--text-muted); font-weight: 400; }
+
+  /* Bonus row — AZN input, no stepper */
+  .bonus-input-wrap {
+    display: flex;
+    align-items: center;
+    border-left: 1px solid var(--border);
+    padding: 0 12px 0 16px;
+    gap: 6px;
+  }
+
+  .bonus-input {
     background: transparent;
     border: none;
     outline: none;
@@ -607,38 +578,54 @@
     font-weight: 600;
     color: var(--text);
     text-align: right;
-    width: 72px;
+    width: 100px;
     padding: 0;
   }
 
-  .input-row-unit {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
+  .bonus-input::-webkit-outer-spin-button,
+  .bonus-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .bonus-input[type=number] { -moz-appearance: textfield; }
+
+  .bonus-unit {
+    font-size: 16px;
     color: var(--text-muted);
-    padding: 0 10px 0 5px;
-  }
-
-  .input-row-divider {
-    width: 1px;
-    height: 36px;
-    background: var(--border);
-    flex-shrink: 0;
-  }
-
-  .input-row-sum {
     font-family: var(--mono);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--accent3);
-    text-align: right;
-    width: 100px;
-    padding: 0 16px;
-    white-space: nowrap;
-    transition: color 0.2s;
   }
 
-  .input-row-sum.zero { color: var(--text-muted); font-weight: 400; }
+  /* Calculate button */
+  .calc-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius);
+    padding: 15px 24px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.03em;
+    margin-top: 16px;
+  }
+
+  .calc-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(200,134,10,0.28);
+  }
+
+  .calc-btn:active { transform: scale(0.98); }
+
+  @media (max-width: 480px) {
+    .header-top { flex-direction: column; }
+    .header-meta { align-items: flex-start; }
+    .row-result-pill { min-width: 80px; padding: 0 10px; font-size: 12px; }
+    .stepper-input { width: 44px; }
+  }
 </style>
 </head>
 <body>
@@ -662,7 +649,7 @@
     </div>
   </header>
 
-  <!-- MONTHLY NORMS FROM AZ PRODUCTION CALENDAR 2026 -->
+  <!-- MONTHLY NORMS -->
   <div class="norms-section">
     <div class="section-label">İstehsalat təqvimi — Aylıq iş saatı normaları 2026</div>
     <div class="norms-grid" id="normsGrid"></div>
@@ -676,7 +663,8 @@
   <!-- INPUTS -->
   <div class="section-label">Hesablama parametrləri</div>
   <div class="card">
-    <!-- Top fields -->
+
+    <!-- Position + Month -->
     <div class="top-fields">
       <div class="float-field readonly">
         <label>Position</label>
@@ -686,109 +674,107 @@
         <label>Month</label>
         <select id="monthSelect"></select>
       </div>
-      <div class="float-field" style="grid-column: 1 / -1;">
-        <label>Gross Salary (AZN)</label>
-        <input id="grossSalary" type="number" step="0.01" value="00,00" placeholder="0.00" />
-      </div>
     </div>
 
-    <!-- Input rows -->
+    <!-- Gross salary — big prominent field -->
+    <div class="gross-field">
+      <label>Gross Salary</label>
+      <input id="grossSalary" type="number" step="0.01" value="" placeholder="0.00" />
+      <span class="currency-symbol">₼</span>
+    </div>
+
+    <!-- Input rows with steppers -->
     <div class="input-rows">
 
+      <!-- Monthly hours -->
       <div class="input-row">
-        <div class="input-row-left">
-          <span class="input-row-icon">🕐</span>
-          <span class="input-row-label">Monthly hours</span>
-        </div>
-        <div class="input-row-right">
-          <div class="input-row-number">
-            <input id="monthlyHours" type="number" value="176" class="input-row-input" min="0" />
-            <span class="input-row-unit">hrs</span>
+        <div class="input-row-icon">🕐</div>
+        <span class="input-row-label">Monthly hours</span>
+        <div class="input-row-control">
+          <button class="stepper-btn minus" onclick="step('monthlyHours', -1)">−</button>
+          <div class="stepper-input-wrap">
+            <input id="monthlyHours" type="number" value="176" class="stepper-input" min="0" />
+            <span class="stepper-unit">hrs</span>
           </div>
-          <div class="input-row-divider"></div>
-          <span class="input-row-sum zero" id="sum_monthly">0.00 ₼</span>
+          <button class="stepper-btn plus" onclick="step('monthlyHours', 1)">+</button>
         </div>
+        <div class="row-result-pill zero" id="sum_monthly">0.00 ₼</div>
       </div>
 
+      <!-- Overtime -->
       <div class="input-row">
-        <div class="input-row-left">
-          <span class="input-row-icon">⚡</span>
-          <span class="input-row-label">Overtime</span>
-        </div>
-        <div class="input-row-right">
-          <div class="input-row-number">
-            <input id="overtime" type="number" value="0" class="input-row-input" min="0" />
-            <span class="input-row-unit">hrs</span>
+        <div class="input-row-icon">⚡</div>
+        <span class="input-row-label">Overtime</span>
+        <div class="input-row-control">
+          <button class="stepper-btn minus" onclick="step('overtime', -1)">−</button>
+          <div class="stepper-input-wrap">
+            <input id="overtime" type="number" value="0" class="stepper-input" min="0" />
+            <span class="stepper-unit">hrs</span>
           </div>
-          <div class="input-row-divider"></div>
-          <span class="input-row-sum zero" id="sum_overtime">0.00 ₼</span>
+          <button class="stepper-btn plus" onclick="step('overtime', 1)">+</button>
         </div>
+        <div class="row-result-pill zero" id="sum_overtime">0.00 ₼</div>
       </div>
 
+      <!-- Night addition -->
       <div class="input-row">
-        <div class="input-row-left">
-          <span class="input-row-icon">🌙</span>
-          <span class="input-row-label">Night Addition</span>
-        </div>
-        <div class="input-row-right">
-          <div class="input-row-number">
-            <input id="nightHours" type="number" value="0" class="input-row-input" min="0" />
-            <span class="input-row-unit">hrs</span>
+        <div class="input-row-icon">🌙</div>
+        <span class="input-row-label">Night Addition</span>
+        <div class="input-row-control">
+          <button class="stepper-btn minus" onclick="step('nightHours', -1)">−</button>
+          <div class="stepper-input-wrap">
+            <input id="nightHours" type="number" value="0" class="stepper-input" min="0" />
+            <span class="stepper-unit">hrs</span>
           </div>
-          <div class="input-row-divider"></div>
-          <span class="input-row-sum zero" id="sum_night">0.00 ₼</span>
+          <button class="stepper-btn plus" onclick="step('nightHours', 1)">+</button>
         </div>
+        <div class="row-result-pill zero" id="sum_night">0.00 ₼</div>
       </div>
 
+      <!-- Evening addition -->
       <div class="input-row">
-        <div class="input-row-left">
-          <span class="input-row-icon">🌆</span>
-          <span class="input-row-label">Evening Addition</span>
-        </div>
-        <div class="input-row-right">
-          <div class="input-row-number">
-            <input id="eveningHours" type="number" value="0" class="input-row-input" min="0" />
-            <span class="input-row-unit">hrs</span>
+        <div class="input-row-icon">🌆</div>
+        <span class="input-row-label">Evening Addition</span>
+        <div class="input-row-control">
+          <button class="stepper-btn minus" onclick="step('eveningHours', -1)">−</button>
+          <div class="stepper-input-wrap">
+            <input id="eveningHours" type="number" value="0" class="stepper-input" min="0" />
+            <span class="stepper-unit">hrs</span>
           </div>
-          <div class="input-row-divider"></div>
-          <span class="input-row-sum zero" id="sum_evening">0.00 ₼</span>
+          <button class="stepper-btn plus" onclick="step('eveningHours', 1)">+</button>
         </div>
+        <div class="row-result-pill zero" id="sum_evening">0.00 ₼</div>
       </div>
 
+      <!-- Holiday hours -->
       <div class="input-row">
-        <div class="input-row-left">
-          <span class="input-row-icon">🎉</span>
-          <span class="input-row-label">Holiday hours</span>
-        </div>
-        <div class="input-row-right">
-          <div class="input-row-number">
-            <input id="holidayHours" type="number" value="0" class="input-row-input" min="0" />
-            <span class="input-row-unit">hrs</span>
+        <div class="input-row-icon">🎉</div>
+        <span class="input-row-label">Holiday hours</span>
+        <div class="input-row-control">
+          <button class="stepper-btn minus" onclick="step('holidayHours', -1)">−</button>
+          <div class="stepper-input-wrap">
+            <input id="holidayHours" type="number" value="0" class="stepper-input" min="0" />
+            <span class="stepper-unit">hrs</span>
           </div>
-          <div class="input-row-divider"></div>
-          <span class="input-row-sum zero" id="sum_holiday">0.00 ₼</span>
+          <button class="stepper-btn plus" onclick="step('holidayHours', 1)">+</button>
         </div>
+        <div class="row-result-pill zero" id="sum_holiday">0.00 ₼</div>
       </div>
 
+      <!-- Bonus (AZN direct input) -->
       <div class="input-row">
-        <div class="input-row-left">
-          <span class="input-row-icon">🎁</span>
-          <span class="input-row-label">Bonuses (in AZN)</span>
-        </div>
-        <div class="input-row-right">
-          <div class="input-row-number">
-            <input id="bonus" type="number" step="0.01" value="0" class="input-row-input" min="0" />
-            <span class="input-row-unit">₼</span>
-          </div>
-          <div class="input-row-divider" style="opacity:0"></div>
-          <span class="input-row-sum zero" style="opacity:0">—</span>
+        <div class="input-row-icon">🎁</div>
+        <span class="input-row-label">Bonuses</span>
+        <div class="bonus-input-wrap">
+          <input id="bonus" type="number" step="0.01" value="0" class="bonus-input" min="0" placeholder="0.00" />
+          <span class="bonus-unit">₼</span>
         </div>
       </div>
 
     </div>
 
-    <button class="calc-btn" onclick="calculate()" style="margin-top:20px; width:100%; justify-content:center; font-size:15px; padding:14px 24px;">
-      Calculate
+    <button class="calc-btn" onclick="calculate()">
+      ✦ Calculate
     </button>
   </div>
 
@@ -815,7 +801,6 @@
 </div>
 
 <script>
-// ─── OFFICIAL AZ 2026 PRODUCTION CALENDAR (Ministry of Labour & Social Protection) ───
 const AZ_NORMS_2026 = [
   { month: "Yanvar",    hours: 151, holidays: ["Jan 1", "Jan 2 (Yeni il)", "Jan 20 (Yas günü)"] },
   { month: "Fevral",   hours: 160, holidays: [] },
@@ -832,9 +817,17 @@ const AZ_NORMS_2026 = [
 ];
 
 const today = new Date();
-const currentMonth = today.getMonth(); // 0-indexed
+const currentMonth = today.getMonth();
 
-// ─── RENDER MONTHLY NORMS GRID ───
+// Stepper helper
+function step(id, delta) {
+  const el = document.getElementById(id);
+  const val = (parseFloat(el.value) || 0) + delta;
+  el.value = Math.max(0, val);
+  calculate();
+}
+
+// Render norms grid
 function renderNorms() {
   const grid = document.getElementById('normsGrid');
   grid.innerHTML = '';
@@ -854,7 +847,7 @@ function renderNorms() {
   });
 }
 
-// ─── POPULATE MONTH SELECT ───
+// Populate month select
 function populateMonths() {
   const sel = document.getElementById('monthSelect');
   AZ_NORMS_2026.forEach((n, i) => {
@@ -864,7 +857,6 @@ function populateMonths() {
     if (i === currentMonth) opt.selected = true;
     sel.appendChild(opt);
   });
-  // Auto-set monthly hours to norm on change
   sel.addEventListener('change', () => {
     const idx = parseInt(sel.value);
     document.getElementById('monthlyHours').value = AZ_NORMS_2026[idx].hours;
@@ -872,10 +864,15 @@ function populateMonths() {
   });
 }
 
-// ─── FORMAT ───
 const fmt = v => v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
-// ─── CALCULATE ───
+function setSum(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = fmt(val) + ' ₼';
+  el.classList.toggle('zero', val === 0);
+}
+
 function calculate() {
   const grossSalary  = parseFloat(document.getElementById('grossSalary').value) || 0;
   const monthIdx     = parseInt(document.getElementById('monthSelect').value);
@@ -887,12 +884,11 @@ function calculate() {
   const holidayHours = parseFloat(document.getElementById('holidayHours').value) || 0;
   const bonus        = parseFloat(document.getElementById('bonus').value) || 0;
 
-  // ─── UPDATE SUM CELLS IN TABLE ───
-  const hourlyRate        = grossSalary / monthlyNorm;
-  const dailySalary       = hourlyRate * 8;
-  const eveningAddPerHr   = hourlyRate * 0.2;
-  const nightAddPerHr     = hourlyRate * 0.4;
-  const doublePayPerHr    = hourlyRate * 2;
+  const hourlyRate      = grossSalary / monthlyNorm;
+  const dailySalary     = hourlyRate * 8;
+  const eveningAddPerHr = hourlyRate * 0.2;
+  const nightAddPerHr   = hourlyRate * 0.4;
+  const doublePayPerHr  = hourlyRate * 2;
 
   const regularPay    = hourlyRate * (monthlyHours - overtime - holidayHours);
   const overtimePay   = overtime * doublePayPerHr;
@@ -901,32 +897,22 @@ function calculate() {
   const holidayPay    = holidayHours * doublePayPerHr;
   const totalAccrued  = regularPay + overtimePay + nightAddPay + eveningAddPay + holidayPay + bonus;
 
-  const setSum = (id, val) => {
-    const el = document.getElementById(id);
-    el.textContent = fmt(val) + ' ₼';
-    el.classList.toggle('zero', val === 0);
-  };
   setSum('sum_monthly',  regularPay);
   setSum('sum_overtime', overtimePay);
   setSum('sum_night',    nightAddPay);
   setSum('sum_evening',  eveningAddPay);
   setSum('sum_holiday',  holidayPay);
 
-  // ─── TAXES (Excel column G) ───
-  // PIT = Personal Income Tax: (TotalAccrued - 200) * 3%  [if > 200, else 0]
   const pitBase  = Math.max(totalAccrued - 200, 0);
-  const pit      = pitBase * 0.03;                              // =(C18-200)*0.03
-  const unemploy = totalAccrued * 0.005;                       // =C18*0.005
-  const dsmf     = 6 + Math.max(totalAccrued - 200, 0) * 0.1; // =6+(C18-200)*0.1
-  const health   = totalAccrued * 0.02;                        // =C18*0.02
-  const totalWithheld = pit + unemploy + dsmf + health;        // =SUM(G7:G10)
+  const pit      = pitBase * 0.03;
+  const unemploy = totalAccrued * 0.005;
+  const dsmf     = 6 + Math.max(totalAccrued - 200, 0) * 0.1;
+  const health   = totalAccrued * 0.02;
+  const totalWithheld = pit + unemploy + dsmf + health;
+  const netPay   = totalAccrued - totalWithheld;
 
-  // ─── FINAL PAYOUT ───
-  const netPay = totalAccrued - totalWithheld;                  // =C18-G11
-
-  // ─── RENDER RESULTS ROW ───
-  const resultsRow = document.getElementById('resultsRow');
-  resultsRow.innerHTML = `
+  // Results row
+  document.getElementById('resultsRow').innerHTML = `
     <div class="result-box highlight">
       <div class="result-label">Ödəniləcək (Netto)</div>
       <div class="result-value">${fmt(netPay)} ₼</div>
@@ -959,121 +945,76 @@ function calculate() {
     </div>
   `;
 
-  // ─── ACCRUED BREAKDOWN ───
-  const accBreak = document.getElementById('accruedBreakdown');
-  accBreak.innerHTML = `
+  // Accrued breakdown — NO formula column
+  document.getElementById('accruedBreakdown').innerHTML = `
     <div class="breakdown-header">Hesablanmış Komponentlər</div>
     <div class="breakdown-row">
       <span class="breakdown-name">Əsas ödəniş</span>
-      <span class="breakdown-formula">=saatlıq × (faktiki − yüksəkgündüz − bayram)</span>
       <span class="breakdown-val">${fmt(regularPay)} ₼</span>
     </div>
     <div class="breakdown-row">
-      <span class="breakdown-name">Yüksəkgündüz əlavəsi</span>
-      <span class="breakdown-formula">=yüksəkgündüz.saat × (saatlıq × 2)</span>
+      <span class="breakdown-name">Overtime əlavəsi</span>
       <span class="breakdown-val ${overtimePay > 0 ? 'yellow' : ''}">${fmt(overtimePay)} ₼</span>
     </div>
     <div class="breakdown-row">
       <span class="breakdown-name">Gecə əlavəsi</span>
-      <span class="breakdown-formula">=gecə.saat × (saatlıq × 0.4)</span>
       <span class="breakdown-val ${nightAddPay > 0 ? 'yellow' : ''}">${fmt(nightAddPay)} ₼</span>
     </div>
     <div class="breakdown-row">
       <span class="breakdown-name">Axşam əlavəsi</span>
-      <span class="breakdown-formula">=axşam.saat × (saatlıq × 0.2)</span>
       <span class="breakdown-val ${eveningAddPay > 0 ? 'yellow' : ''}">${fmt(eveningAddPay)} ₼</span>
     </div>
     <div class="breakdown-row">
       <span class="breakdown-name">Bayram saatları</span>
-      <span class="breakdown-formula">=bayram.saat × (saatlıq × 2)</span>
       <span class="breakdown-val ${holidayPay > 0 ? 'yellow' : ''}">${fmt(holidayPay)} ₼</span>
     </div>
     <div class="breakdown-row">
       <span class="breakdown-name">Mükafat</span>
-      <span class="breakdown-formula">(manual)</span>
       <span class="breakdown-val ${bonus > 0 ? 'yellow' : ''}">${fmt(bonus)} ₼</span>
     </div>
     <div class="breakdown-row total">
       <span class="breakdown-name" style="font-weight:600;color:var(--text)">Cəmi Hesablanmış</span>
-      <span class="breakdown-formula">=SUM(C8:C13)</span>
       <span class="breakdown-val green">${fmt(totalAccrued)} ₼</span>
     </div>
   `;
 
-  // ─── TAX BREAKDOWN ───
-  const taxBreak = document.getElementById('taxBreakdown');
-  taxBreak.innerHTML = `
+  // Tax breakdown — NO formula column
+  document.getElementById('taxBreakdown').innerHTML = `
     <div class="breakdown-header">Vergilər və Tutulmalar</div>
     <div class="breakdown-row">
       <span class="breakdown-name">Gəlir Vergisi (PGV)</span>
-      <span class="breakdown-formula">=(Cəmi − 200) × 3%</span>
       <span class="breakdown-val red">− ${fmt(pit)} ₼</span>
     </div>
     <div class="breakdown-row">
       <span class="breakdown-name">İşsizlik sığortası</span>
-      <span class="breakdown-formula">=Cəmi × 0.5%</span>
       <span class="breakdown-val red">− ${fmt(unemploy)} ₼</span>
     </div>
     <div class="breakdown-row">
       <span class="breakdown-name">DSMF (Pensiya Fondu)</span>
-      <span class="breakdown-formula">=6 + (Cəmi − 200) × 10%</span>
       <span class="breakdown-val red">− ${fmt(dsmf)} ₼</span>
     </div>
     <div class="breakdown-row">
       <span class="breakdown-name">Tibbi sığorta</span>
-      <span class="breakdown-formula">=Cəmi × 2%</span>
       <span class="breakdown-val red">− ${fmt(health)} ₼</span>
     </div>
     <div class="breakdown-row total">
       <span class="breakdown-name" style="font-weight:600;color:var(--text)">Cəmi Tutulmalar</span>
-      <span class="breakdown-formula">=SUM(G7:G10)</span>
       <span class="breakdown-val red">− ${fmt(totalWithheld)} ₼</span>
     </div>
     <div class="breakdown-row">
-      <span class="breakdown-name" style="font-weight:700;color:#fff;font-size:14px">Ödəniləcək məbləğ</span>
-      <span class="breakdown-formula">=C18 − G11</span>
-      <span class="breakdown-val green" style="font-size:18px">${fmt(netPay)} ₼</span>
+      <span class="breakdown-name" style="font-weight:700;font-size:14px">Ödəniləcək məbləğ</span>
+      <span class="breakdown-val green big">${fmt(netPay)} ₼</span>
     </div>
   `;
-
-  // ─── FORMULA AUDIT ───
-  const fGrid = document.getElementById('formulaGrid');
-  const formulas = [
-    { name: "Saatlıq tarif",         expr: `= ${grossSalary} / ${monthlyNorm}`,              result: fmt(hourlyRate) + ' ₼', ok: true },
-    { name: "Günlük tarif",           expr: `= saatlıq × 8`,                                  result: fmt(dailySalary) + ' ₼', ok: true },
-    { name: "Gecə əlavəsi/saat",      expr: `= saatlıq × 0.4`,                                result: fmt(nightAddPerHr) + ' ₼', ok: true },
-    { name: "Axşam əlavəsi/saat",     expr: `= saatlıq × 0.2`,                                result: fmt(eveningAddPerHr) + ' ₼', ok: true },
-    { name: "Cəmi hesablanmış",       expr: `= SUM(C8:C13)`,                                  result: fmt(totalAccrued) + ' ₼', ok: true },
-    { name: "PGV (Gəlir vergisi)",    expr: `= (${fmt(totalAccrued)} − 200) × 3%`,            result: fmt(pit) + ' ₼', ok: true },
-    { name: "İşsizlik sığortası",     expr: `= ${fmt(totalAccrued)} × 0.5%`,                  result: fmt(unemploy) + ' ₼', ok: true },
-    { name: "DSMF",                   expr: `= 6 + (${fmt(totalAccrued)} − 200) × 10%`,       result: fmt(dsmf) + ' ₼', ok: true },
-    { name: "Tibbi sığorta",          expr: `= ${fmt(totalAccrued)} × 2%`,                    result: fmt(health) + ' ₼', ok: true },
-    { name: "Cəmi tutulmalar",        expr: `= SUM(G7:G10)`,                                  result: fmt(totalWithheld) + ' ₼', ok: true },
-    { name: "Netto ödəniş",           expr: `= ${fmt(totalAccrued)} − ${fmt(totalWithheld)}`, result: fmt(netPay) + ' ₼', ok: true },
-    { name: "Aylıq norma (VLOOKUP)", expr: `= VLOOKUP("${AZ_NORMS_2026[monthIdx].month}", M2:N13, 2, FALSE)`, result: monthlyNorm + ' saat', ok: true },
-  ];
-
-  fGrid.innerHTML = formulas.map(f => `
-    <div class="formula-item">
-      <div class="formula-item-name">${f.name}</div>
-      <div class="formula-item-expr">${f.expr}</div>
-      <div class="formula-item-status">
-        <span class="${f.ok ? 'status-ok' : 'status-warn'}">${f.ok ? '✓' : '⚠'}</span>
-        <span style="color:var(--text-dim)">${f.result}</span>
-      </div>
-    </div>
-  `).join('');
 }
 
-// ─── INIT ───
+// Init
 renderNorms();
 populateMonths();
-// Pre-fill monthly hours with current month norm
-const initMonthIdx = new Date().getMonth();
-document.getElementById('monthlyHours').value = AZ_NORMS_2026[initMonthIdx].hours;
+document.getElementById('monthlyHours').value = AZ_NORMS_2026[currentMonth].hours;
 calculate();
 
-// Auto-recalculate on any input change
+// Live recalculate
 document.querySelectorAll('input').forEach(el => el.addEventListener('input', calculate));
 </script>
 </body>
