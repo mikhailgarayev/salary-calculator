@@ -690,11 +690,90 @@
     color: var(--text-dim);
   }
 
+  .input-row-label-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+
   .input-row-label {
     font-size: 14px;
     color: var(--text-dim);
     font-weight: 500;
-    flex: 1;
+  }
+
+  .field-help-btn {
+    width: 21px;
+    height: 21px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .16s ease;
+  }
+
+  .field-help-btn:hover {
+    border-color: rgba(200,134,10,0.5);
+    color: var(--accent);
+    background: rgba(200,134,10,0.09);
+  }
+
+  .help-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 12, 6, 0.82);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 24px;
+  }
+
+  .help-modal.open { display: flex; }
+
+  .help-modal-content {
+    width: min(1100px, 100%);
+    max-height: 92vh;
+    position: relative;
+  }
+
+  .help-modal img {
+    width: 100%;
+    max-height: 92vh;
+    object-fit: contain;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: #fff;
+  }
+
+  .help-modal-text {
+    color: #fff;
+    font-size: 18px;
+    line-height: 1.6;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .help-modal-close {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    color: #111;
+    font-size: 20px;
+    cursor: pointer;
   }
 
   .input-row-control {
@@ -1084,7 +1163,7 @@
 
       <div class="input-row">
         <div class="input-row-icon">🕐</div>
-        <span class="input-row-label">Monthly hours</span>
+        <span class="input-row-label-wrap"><span class="input-row-label">Monthly hours</span><button class="field-help-btn" type="button" onclick="openFieldHelp('monthlyHours')" aria-label="Monthly hours izahı">?</button></span>
         <div class="input-row-control">
           <button class="stepper-btn minus" onclick="step('monthlyHours', -1)">−</button>
           <div class="stepper-input-wrap">
@@ -1098,7 +1177,7 @@
 
       <div class="input-row">
         <div class="input-row-icon">⚡</div>
-        <span class="input-row-label">Overtime</span>
+        <span class="input-row-label-wrap"><span class="input-row-label">Overtime</span><button class="field-help-btn" type="button" onclick="openFieldHelp('overtime')" aria-label="Overtime izahı">?</button></span>
         <div class="input-row-control">
           <button class="stepper-btn minus" onclick="step('overtime', -1)">−</button>
           <div class="stepper-input-wrap">
@@ -1112,7 +1191,7 @@
 
       <div class="input-row">
         <div class="input-row-icon">🌙</div>
-        <span class="input-row-label">Night Addition</span>
+        <span class="input-row-label-wrap"><span class="input-row-label">Night Addition</span><button class="field-help-btn" type="button" onclick="openFieldHelp('nightAddition')" aria-label="Night Addition izahı">?</button></span>
         <div class="input-row-control">
           <button class="stepper-btn minus" onclick="step('nightHours', -1)">−</button>
           <div class="stepper-input-wrap">
@@ -1126,7 +1205,7 @@
 
       <div class="input-row">
         <div class="input-row-icon">🌆</div>
-        <span class="input-row-label">Evening Addition</span>
+        <span class="input-row-label-wrap"><span class="input-row-label">Evening Addition</span><button class="field-help-btn" type="button" onclick="openFieldHelp('eveningAddition')" aria-label="Evening Addition izahı">?</button></span>
         <div class="input-row-control">
           <button class="stepper-btn minus" onclick="step('eveningHours', -1)">−</button>
           <div class="stepper-input-wrap">
@@ -1140,7 +1219,7 @@
 
       <div class="input-row">
         <div class="input-row-icon">🎉</div>
-        <span class="input-row-label">Holiday hours</span>
+        <span class="input-row-label-wrap"><span class="input-row-label">Holiday hours</span><button class="field-help-btn" type="button" onclick="openFieldHelp('holidayHours')" aria-label="Holiday hours izahı">?</button></span>
         <div class="input-row-control">
           <button class="stepper-btn minus" onclick="step('holidayHours', -1)">−</button>
           <div class="stepper-input-wrap">
@@ -1154,7 +1233,7 @@
 
       <div class="input-row">
         <div class="input-row-icon">🎁</div>
-        <span class="input-row-label">Bonuses</span>
+        <span class="input-row-label-wrap"><span class="input-row-label">Bonuses</span><button class="field-help-btn" type="button" onclick="openFieldHelp('bonuses')" aria-label="Bonuses izahı">?</button></span>
         <div class="bonus-input-wrap">
           <input id="bonus" type="number" step="0.01" value="0" class="bonus-input" min="0" placeholder="0.00" />
           <span class="bonus-unit">₼</span>
@@ -1188,7 +1267,63 @@
 
 </div>
 
+<div class="help-modal" id="helpModal" onclick="closeFieldHelp(event)">
+  <div class="help-modal-content">
+    <button class="help-modal-close" type="button" onclick="closeFieldHelp()" aria-label="Bağla">×</button>
+    <img id="helpModalImage" src="" alt="" style="display:none;">
+    <div id="helpModalText" class="help-modal-text" style="display:none;"></div>
+  </div>
+</div>
+
 <script>
+
+const FIELD_HELP_CONTENT = {
+  monthlyHours: { type: 'image', src: 'monthly hours.drawio.png', alt: 'Monthly hours izahı' },
+  overtime: { type: 'image', src: 'overtime payment.drawio.png', alt: 'Overtime izahı' },
+  nightAddition: { type: 'image', src: 'night and evening addition.drawio.png', alt: 'Night Addition izahı' },
+  eveningAddition: { type: 'image', src: 'night and evening addition.drawio.png', alt: 'Evening Addition izahı' },
+  holidayHours: { type: 'image', src: 'holiday hours.drawio.png', alt: 'Holiday hours izahı' },
+  bonuses: { type: 'text', text: 'Əgər şirkət tərəfindən sizə əlavə bir bonus təqdim edilibsə onu qeyd edin. Əks halda boş buraxın.' }
+};
+
+function openFieldHelp(fieldKey) {
+  const modal = document.getElementById('helpModal');
+  const modalImage = document.getElementById('helpModalImage');
+  const modalText = document.getElementById('helpModalText');
+  const help = FIELD_HELP_CONTENT[fieldKey];
+  if (!help) return;
+
+  modalImage.style.display = 'none';
+  modalText.style.display = 'none';
+
+  if (help.type === 'image') {
+    modalImage.src = help.src;
+    modalImage.alt = help.alt;
+    modalImage.style.display = 'block';
+    modalImage.onerror = function () {
+      modalImage.style.display = 'none';
+      modalText.textContent = `Şəkil tapılmadı: ${help.src}`;
+      modalText.style.display = 'block';
+    };
+  } else {
+    modalText.textContent = help.text;
+    modalText.style.display = 'block';
+  }
+
+  modal.classList.add('open');
+}
+
+function closeFieldHelp(event) {
+  if (event && event.target && event.target.id !== 'helpModal') return;
+  document.getElementById('helpModal').classList.remove('open');
+}
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    document.getElementById('helpModal')?.classList.remove('open');
+  }
+});
+
 const AZ_NORMS_2026 = [
   { month: "Yanvar",    hours: 151, holidays: ["Jan 1", "Jan 2 (Yeni il)", "Jan 20 (Yas günü)"] },
   { month: "Fevral",   hours: 160, holidays: [] },
