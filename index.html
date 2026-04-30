@@ -522,6 +522,44 @@
     line-height: 1.6;
   }
 
+  .guide-resource-links {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .guide-resource-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    background: linear-gradient(180deg, rgba(200,134,10,0.08), rgba(200,134,10,0.03));
+    border: 1px solid rgba(200,134,10,0.22);
+    border-radius: 10px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 12px;
+    transition: border-color .15s ease, transform .15s ease, background .15s ease;
+  }
+
+  .guide-resource-link:hover {
+    border-color: rgba(200,134,10,0.5);
+    background: linear-gradient(180deg, rgba(200,134,10,0.12), rgba(200,134,10,0.06));
+    transform: translateY(-1px);
+  }
+
+  .guide-resource-title {
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .guide-resource-arrow {
+    font-family: var(--mono);
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
   /* ── IMPROVED INPUTS ── */
   .top-fields {
     display: grid;
@@ -873,6 +911,17 @@
 
       <div class="guide-body" id="guideBody">
         <div class="guide-body-inner">
+
+          <div class="guide-resource-links">
+            <a class="guide-resource-link" href="https://app.getguru.com/card/irpnogzT/Overtime-work-" target="_blank" rel="noopener noreferrer">
+              <span class="guide-resource-title">📘 Overtime work — ətraflı Guru kartı</span>
+              <span class="guide-resource-arrow">Aç →</span>
+            </a>
+            <a class="guide-resource-link" href="https://app.getguru.com/card/c9pjrddi/Salary-calculation-formula-" target="_blank" rel="noopener noreferrer">
+              <span class="guide-resource-title">🧮 Salary calculation formula — ətraflı Guru kartı</span>
+              <span class="guide-resource-arrow">Aç →</span>
+            </a>
+          </div>
 
           <div class="guide-steps">
 
