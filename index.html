@@ -1137,6 +1137,122 @@
 
   .calc-btn:active { transform: scale(0.98); }
 
+  /* RESULTS SECTION ANIMATION */
+  .results-section {
+    opacity: 0;
+    transform: translateY(0px);
+  }
+
+  .results-section.revealed {
+    animation: resultsReveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes resultsReveal {
+    0%   { opacity: 0; transform: translateY(24px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .results-section .result-box {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .results-section.revealed .result-box {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .results-section.revealed .result-box:nth-child(1) { transition-delay: 0.05s; }
+  .results-section.revealed .result-box:nth-child(2) { transition-delay: 0.10s; }
+  .results-section.revealed .result-box:nth-child(3) { transition-delay: 0.15s; }
+  .results-section.revealed .result-box:nth-child(4) { transition-delay: 0.20s; }
+  .results-section.revealed .result-box:nth-child(5) { transition-delay: 0.25s; }
+  .results-section.revealed .result-box:nth-child(6) { transition-delay: 0.30s; }
+
+  .results-section .breakdown-row {
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .results-section.revealed .breakdown-row {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Stagger breakdown rows */
+  .results-section.revealed #accruedBreakdown .breakdown-row:nth-child(1) { transition-delay: 0.18s; }
+  .results-section.revealed #accruedBreakdown .breakdown-row:nth-child(2) { transition-delay: 0.23s; }
+  .results-section.revealed #accruedBreakdown .breakdown-row:nth-child(3) { transition-delay: 0.28s; }
+  .results-section.revealed #accruedBreakdown .breakdown-row:nth-child(4) { transition-delay: 0.33s; }
+  .results-section.revealed #accruedBreakdown .breakdown-row:nth-child(5) { transition-delay: 0.38s; }
+  .results-section.revealed #accruedBreakdown .breakdown-row:nth-child(6) { transition-delay: 0.43s; }
+  .results-section.revealed #accruedBreakdown .breakdown-row:nth-child(7) { transition-delay: 0.48s; }
+  .results-section.revealed #taxBreakdown .breakdown-row:nth-child(1) { transition-delay: 0.30s; }
+  .results-section.revealed #taxBreakdown .breakdown-row:nth-child(2) { transition-delay: 0.35s; }
+  .results-section.revealed #taxBreakdown .breakdown-row:nth-child(3) { transition-delay: 0.40s; }
+  .results-section.revealed #taxBreakdown .breakdown-row:nth-child(4) { transition-delay: 0.45s; }
+  .results-section.revealed #taxBreakdown .breakdown-row:nth-child(5) { transition-delay: 0.50s; }
+  .results-section.revealed #taxBreakdown .breakdown-row:nth-child(6) { transition-delay: 0.55s; }
+
+  /* Button loading state */
+  .calc-btn {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .calc-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
+    transform: translateX(-100%);
+    pointer-events: none;
+  }
+
+  .calc-btn.loading::after {
+    animation: btnShimmer 0.6s ease forwards;
+  }
+
+  @keyframes btnShimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .calc-btn.loading .calc-btn-icon {
+    animation: iconSpin 0.5s ease;
+  }
+
+  @keyframes iconSpin {
+    0%   { transform: rotate(0deg) scale(1); }
+    50%  { transform: rotate(180deg) scale(1.3); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  .calc-btn-spinner { display: none; }
+
+  /* Pulse ring on button click */
+  .calc-btn.fired {
+    animation: btnPulse 0.4s ease;
+  }
+
+  @keyframes btnPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(200,134,10,0.5); }
+    70%  { box-shadow: 0 0 0 14px rgba(200,134,10,0); }
+    100% { box-shadow: 0 0 0 0 rgba(200,134,10,0); }
+  }
+
+  /* Result highlight number counter flash */
+  @keyframes numFlash {
+    0%   { color: var(--accent); transform: scale(1.08); }
+    100% { color: inherit; transform: scale(1); }
+  }
+
+  .num-flash {
+    animation: numFlash 0.45s ease forwards;
+  }
+
   /* FOOTER */
   footer {
     margin-top: 60px;
@@ -1289,7 +1405,7 @@
                   </div>
                 </div>
                 <div class="guide-note">
-                  ✓ Bu normalar Azərbaycan Vergi Məcəlləsinə və Əmək Məcəlləsinə uyğundur. Konkret hallar üçün Team Lead-nızıla məsləhətləşin.
+                  ✓ Bu normalar Azərbaycan Vergi Məcəlləsinə və Əmək Məcəlləsinə uyğundur. Konkret hallar üçün Team Lead-ınızla məsləhətləşin.
                 </div>
               </div>
             </div>
@@ -1509,22 +1625,26 @@
 
     </div>
 
-    <button class="calc-btn" onclick="calculate()">
-      ✦ Calculate
+    <button class="calc-btn" id="calcBtn" onclick="triggerCalculate()">
+      <span class="calc-btn-icon">✦</span>
+      <span class="calc-btn-text">Calculate</span>
+      <span class="calc-btn-spinner" aria-hidden="true"></span>
     </button>
   </div>
 
-  <div class="divider"></div>
+  <div class="divider" id="resultsDivider"></div>
 
   <!-- RESULTS -->
-  <div class="section-label">Hesablama nəticəsi</div>
-  <div class="results-row" id="resultsRow"></div>
+  <div id="resultsSection" class="results-section">
+    <div class="section-label">Hesablama nəticəsi</div>
+    <div class="results-row" id="resultsRow"></div>
 
-  <div class="section-label">Hesablanmış məbləğlər (Accrued)</div>
-  <div class="breakdown" id="accruedBreakdown"></div>
+    <div class="section-label">Hesablanmış məbləğlər (Accrued)</div>
+    <div class="breakdown" id="accruedBreakdown"></div>
 
-  <div class="section-label">Vergilər və tutulmalar</div>
-  <div class="breakdown" id="taxBreakdown"></div>
+    <div class="section-label">Vergilər və tutulmalar</div>
+    <div class="breakdown" id="taxBreakdown"></div>
+  </div>
 
   <!-- FOOTER -->
   <footer>
@@ -1952,15 +2072,73 @@ function calculate() {
   if (salaryMode === 'split') updateSplitSummary();
 }
 
+// ── ANIMATION HELPERS ──
+
+let firstCalcDone = false;
+
+function triggerCalculate() {
+  const btn = document.getElementById('calcBtn');
+
+  // Button shimmer + icon spin + pulse ring
+  btn.classList.remove('loading', 'fired');
+  void btn.offsetWidth; // reflow
+  btn.classList.add('loading', 'fired');
+
+  setTimeout(() => {
+    calculate();
+    animateResults();
+    btn.classList.remove('loading');
+    firstCalcDone = true;
+  }, 280);
+}
+
+function animateResults() {
+  const section = document.getElementById('resultsSection');
+  const divider = document.getElementById('resultsDivider');
+
+  // Reset
+  section.classList.remove('revealed');
+  void section.offsetWidth;
+
+  // Reveal
+  section.classList.add('revealed');
+
+  // Scroll into view smoothly only if below viewport
+  setTimeout(() => {
+    const rect = section.getBoundingClientRect();
+    if (rect.top > window.innerHeight * 0.85) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 100);
+
+  // Flash the netto value
+  setTimeout(() => {
+    const highlight = section.querySelector('.result-box.highlight .result-value');
+    if (highlight) {
+      highlight.classList.remove('num-flash');
+      void highlight.offsetWidth;
+      highlight.classList.add('num-flash');
+    }
+  }, 400);
+}
+
 // Init
 renderNorms();
 populateMonths();
 document.getElementById('monthlyHours').value = AZ_NORMS_2026[currentMonth].hours;
 document.getElementById('p2To').value = MONTH_DAYS_2026[currentMonth];
 updateSplitSummary();
-calculate();
+calculate(); // silent initial calc (no animation)
+
+// Show results immediately on load (no animation, just visible)
+document.getElementById('resultsSection').style.opacity = '1';
 
 document.querySelectorAll('input').forEach(el => el.addEventListener('input', () => {
+  if (salaryMode === 'split') updateSplitSummary();
+  calculate(); // live update without animation
+}));
+
+document.querySelectorAll('select').forEach(el => el.addEventListener('change', () => {
   if (salaryMode === 'split') updateSplitSummary();
   calculate();
 }));
