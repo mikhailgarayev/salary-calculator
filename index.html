@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Əmək haqqı kalkulyatoru · VOLT AZƏRBAYCAN</title>
+<link rel="icon" href="./favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -309,12 +310,320 @@
   }
 
   /* ══════════════════════════════════════
+     SPLIT SALARY SECTION
+  ══════════════════════════════════════ */
+
+  .salary-mode-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+  }
+
+  .salary-mode-btn {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 9px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-muted);
+    background: transparent;
+    letter-spacing: 0.02em;
+  }
+
+  .salary-mode-btn.active {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    border: 1px solid var(--border);
+  }
+
+  /* Single gross field */
+  .gross-field {
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .gross-field label {
+    position: absolute;
+    top: 12px; left: 20px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .gross-field input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px 52px 12px 20px;
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    -webkit-appearance: none;
+    letter-spacing: -0.01em;
+  }
+
+  .gross-field input:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
+    background: #fff;
+  }
+
+  .gross-field .currency-symbol {
+    position: absolute;
+    right: 20px;
+    bottom: 14px;
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  /* SPLIT salary panel */
+  .split-salary-panel {
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  .split-salary-panel.visible { display: block; }
+
+  .split-salary-info {
+    background: rgba(200,134,10,0.06);
+    border: 1px solid rgba(200,134,10,0.2);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.55;
+  }
+
+  .split-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 580px) {
+    .split-grid {
+      grid-template-columns: 1fr;
+    }
+    .split-arrow { display: none; }
+  }
+
+  .split-period-block {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    position: relative;
+    transition: border-color 0.18s;
+  }
+
+  .split-period-block:focus-within {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+    background: #fff;
+  }
+
+  .split-period-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .split-period-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .split-period-dot.p1 { background: var(--accent2); }
+  .split-period-dot.p2 { background: var(--accent3); }
+
+  .split-day-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .split-day-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .split-day-inputs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .split-day-input {
+    width: 52px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .split-day-input:focus { border-color: var(--accent2); }
+
+  .split-day-sep {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+
+  .split-salary-input-wrap {
+    position: relative;
+  }
+
+  .split-salary-sublabel {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .split-salary-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 40px 10px 14px;
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+
+  .split-salary-input::-webkit-outer-spin-button,
+  .split-salary-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .split-salary-input[type=number] { -moz-appearance: textfield; }
+
+  .split-salary-input:focus { border-color: var(--accent2); }
+
+  .split-salary-currency {
+    position: absolute;
+    right: 12px;
+    bottom: 11px;
+    font-family: var(--mono);
+    font-size: 16px;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .split-period-hours-pill {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .split-period-hours-pill strong {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .split-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 16px;
+    color: var(--text-muted);
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .split-summary-bar {
+    display: flex;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 12px;
+    color: var(--text-dim);
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+  }
+
+  .split-summary-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .split-summary-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .split-summary-dot.p1 { background: var(--accent2); }
+  .split-summary-dot.p2 { background: var(--accent3); }
+  .split-summary-dot.warn { background: var(--red); }
+
+  .split-summary-val {
+    font-family: var(--mono);
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .split-warning {
+    font-size: 11px;
+    color: var(--red);
+  }
+
+  /* ══════════════════════════════════════
      INSTRUCTION / USER GUIDE SECTION
   ══════════════════════════════════════ */
 
   .guide-section { margin-bottom: 32px; }
 
-  /* Accordion wrapper */
   .guide-accordion {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -322,7 +631,6 @@
     overflow: hidden;
   }
 
-  /* Toggle button (closed state) */
   .guide-toggle {
     width: 100%;
     display: flex;
@@ -347,9 +655,7 @@
     flex-shrink: 0;
   }
 
-  .guide-toggle-text {
-    flex: 1;
-  }
+  .guide-toggle-text { flex: 1; }
 
   .guide-toggle-title {
     font-size: 14px;
@@ -373,11 +679,8 @@
     transition: transform 0.25s ease;
   }
 
-  .guide-accordion.open .guide-chevron {
-    transform: rotate(180deg);
-  }
+  .guide-accordion.open .guide-chevron { transform: rotate(180deg); }
 
-  /* Collapsible body */
   .guide-body {
     max-height: 0;
     overflow: hidden;
@@ -390,16 +693,9 @@
     border-top: 1px solid var(--border);
   }
 
-  .guide-body-inner {
-    padding: 28px 24px 24px;
-  }
+  .guide-body-inner { padding: 28px 24px 24px; }
 
-  /* Steps list */
-  .guide-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
+  .guide-steps { display: flex; flex-direction: column; gap: 0; }
 
   .guide-step {
     display: flex;
@@ -450,7 +746,6 @@
     font-weight: 600;
   }
 
-  /* Tag chips inside desc */
   .guide-tag {
     display: inline-flex;
     align-items: center;
@@ -466,7 +761,6 @@
     vertical-align: middle;
   }
 
-  /* Tax info grid */
   .guide-tax-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -507,7 +801,6 @@
     line-height: 1.4;
   }
 
-  /* Footer notice inside guide */
   .guide-note {
     margin-top: 20px;
     background: rgba(22,163,74,0.06);
@@ -522,11 +815,7 @@
     line-height: 1.6;
   }
 
-  .guide-resource-links {
-    display: grid;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
+  .guide-resource-links { display: grid; gap: 8px; margin-bottom: 16px; }
 
   .guide-resource-link {
     display: flex;
@@ -549,18 +838,10 @@
     transform: translateY(-1px);
   }
 
-  .guide-resource-title {
-    font-weight: 600;
-    line-height: 1.35;
-  }
+  .guide-resource-title { font-weight: 600; line-height: 1.35; }
+  .guide-resource-arrow { font-family: var(--mono); color: var(--text-muted); flex-shrink: 0; }
 
-  .guide-resource-arrow {
-    font-family: var(--mono);
-    color: var(--text-muted);
-    flex-shrink: 0;
-  }
-
-  /* ── IMPROVED INPUTS ── */
+  /* ── INPUTS ── */
   .top-fields {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -612,56 +893,6 @@
     cursor: default;
   }
 
-  .gross-field {
-    margin-bottom: 20px;
-    position: relative;
-  }
-
-  .gross-field label {
-    position: absolute;
-    top: 12px; left: 20px;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-weight: 600;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .gross-field input {
-    width: 100%;
-    background: var(--surface2);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    padding: 32px 52px 12px 20px;
-    font-family: var(--mono);
-    font-size: 26px;
-    font-weight: 600;
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
-    -webkit-appearance: none;
-    letter-spacing: -0.01em;
-  }
-
-  .gross-field input:focus {
-    border-color: var(--accent2);
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
-    background: #fff;
-  }
-
-  .gross-field .currency-symbol {
-    position: absolute;
-    right: 20px;
-    bottom: 14px;
-    font-family: var(--mono);
-    font-size: 20px;
-    font-weight: 500;
-    color: var(--text-muted);
-    pointer-events: none;
-  }
-
   .input-rows { display: flex; flex-direction: column; gap: 6px; }
 
   .input-row {
@@ -697,15 +928,10 @@
     flex: 1;
   }
 
-  .input-row-label {
-    font-size: 14px;
-    color: var(--text-dim);
-    font-weight: 500;
-  }
+  .input-row-label { font-size: 14px; color: var(--text-dim); font-weight: 500; }
 
   .field-help-btn {
-    width: 21px;
-    height: 21px;
+    width: 21px; height: 21px;
     border-radius: 50%;
     border: 1px solid var(--border);
     background: var(--surface);
@@ -764,10 +990,8 @@
 
   .help-modal-close {
     position: absolute;
-    top: -12px;
-    right: -12px;
-    width: 36px;
-    height: 36px;
+    top: -12px; right: -12px;
+    width: 36px; height: 36px;
     border-radius: 50%;
     border: none;
     background: #fff;
@@ -786,11 +1010,8 @@
   }
 
   .stepper-btn {
-    width: 40px;
-    height: 58px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 40px; height: 58px;
+    display: flex; align-items: center; justify-content: center;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -805,14 +1026,11 @@
 
   .stepper-btn:hover { background: rgba(0,0,0,0.04); color: var(--text); }
   .stepper-btn:active { background: rgba(0,0,0,0.08); }
-
   .stepper-btn.minus { border-right: 1px solid var(--border); }
   .stepper-btn.plus { border-left: 1px solid var(--border); }
 
   .stepper-input-wrap {
-    display: flex;
-    align-items: center;
-    padding: 0 6px;
+    display: flex; align-items: center; padding: 0 6px;
   }
 
   .stepper-input {
@@ -833,10 +1051,8 @@
   .stepper-input[type=number] { -moz-appearance: textfield; }
 
   .stepper-unit {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.05em; color: var(--text-muted);
     padding-right: 4px;
   }
 
@@ -883,11 +1099,7 @@
   .bonus-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .bonus-input[type=number] { -moz-appearance: textfield; }
 
-  .bonus-unit {
-    font-size: 16px;
-    color: var(--text-muted);
-    font-family: var(--mono);
-  }
+  .bonus-unit { font-size: 16px; color: var(--text-muted); font-family: var(--mono); }
 
   .calc-btn {
     display: flex;
@@ -973,7 +1185,7 @@
     </div>
   </header>
 
-  <!-- USER GUIDE / ISTIFADE TELIMATI -->
+  <!-- USER GUIDE -->
   <div class="guide-section">
     <div class="section-label">İstifadəçi təlimatı</div>
     <div class="guide-accordion" id="guideAccordion">
@@ -981,7 +1193,7 @@
         <div class="guide-toggle-icon">📖</div>
         <div class="guide-toggle-text">
           <span class="guide-toggle-title">Kalkulyatordan necə istifadə etmək olar?</span>
-          <span class="guide-toggle-sub">Addım-addım izah · Vergi qaydaları · Tez-tez verilən suallar</span>
+          <span class="guide-toggle-sub">Addım-addım izah · Vergi qaydaları · Bölünmüş maaş rejimi</span>
         </div>
         <svg class="guide-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="5 8 10 13 15 8"/>
@@ -1004,44 +1216,33 @@
 
           <div class="guide-steps">
 
-            <!-- Step 1 -->
             <div class="guide-step">
               <div class="guide-step-num">01</div>
               <div class="guide-step-content">
-                <div class="guide-step-title">
-                  <span class="guide-step-emoji">📅</span>
-                  Ayı seçin
-                </div>
+                <div class="guide-step-title"><span class="guide-step-emoji">📅</span>Ayı seçin</div>
                 <div class="guide-step-desc">
-                  <strong>Month</strong> açılan menyusundan hesablama üçün lazım olan ayı seçin. Seçdiyiniz aya uyğun <strong>aylıq iş saatı norması</strong> avtomatik olaraq <span class="guide-tag">Monthly hours</span> xanasına doldurulur. Cari ay standart olaraq seçilir.
+                  <strong>Month</strong> açılan menyusundan hesablama üçün lazım olan ayı seçin. Seçdiyiniz aya uyğun <strong>aylıq iş saatı norması</strong> avtomatik olaraq <span class="guide-tag">Monthly hours</span> xanasına doldurulur.
                 </div>
               </div>
             </div>
 
-            <!-- Step 2 -->
             <div class="guide-step">
               <div class="guide-step-num">02</div>
               <div class="guide-step-content">
-                <div class="guide-step-title">
-                  <span class="guide-step-emoji">💰</span>
-                  Brüt əmək haqqını daxil edin
-                </div>
+                <div class="guide-step-title"><span class="guide-step-emoji">💰</span>Maaş rejimini seçin</div>
                 <div class="guide-step-desc">
-                  <strong>Gross Salary</strong> xanasına aylıq <strong>brüt (vergidən əvvəlki)</strong> əmək haqqınızı manatla yazın. Bu məbləğ iş müqaviləsinizdə göstərilən rəsmi tarif olmalıdır. Bütün digər hesablamalar bu rəqəmə əsasən aparılır.
+                  Kalkulyatorda iki rejim mövcuddur:<br><br>
+                  · <strong>Sabit maaş</strong> — Bütün ay üçün eyni brüt maaş tətbiq olunur.<br>
+                  · <strong>Bölünmüş maaş</strong> — Ayın müxtəlif tarixlərindən fərqli maaşlar tətbiq olunur (məs. maaş artımı olduqda). Hər iki dövr üçün tarix aralığını və müvafiq brüt maaşı daxil edin. Kalkulyator iş saatlarını proporsional olaraq bölüşdürür.
                 </div>
               </div>
             </div>
 
-            <!-- Step 3 -->
             <div class="guide-step">
               <div class="guide-step-num">03</div>
               <div class="guide-step-content">
-                <div class="guide-step-title">
-                  <span class="guide-step-emoji">🕐</span>
-                  İş saatlarını tənzimləyin
-                </div>
+                <div class="guide-step-title"><span class="guide-step-emoji">🕐</span>İş saatlarını tənzimləyin</div>
                 <div class="guide-step-desc">
-                  Aşağıdakı sahələri faktiki iş vaxtınıza uyğun doldurun. Dəyəri dəyişmək üçün <span class="guide-tag">−</span> və <span class="guide-tag">+</span> düymələrindən istifadə edin və ya birbaşa rəqəm yazın:<br><br>
                   · <strong>Monthly hours</strong> — Ayda faktiki işlədiyiniz ümumi saat sayı<br>
                   · <strong>Overtime</strong> — Normadan artıq işlənmiş saatlar (2× tarif ilə ödənilir)<br>
                   · <strong>Night Addition</strong> — Gecə saatları (22:00–06:00 arası; +40% əlavə)<br>
@@ -1051,80 +1252,43 @@
               </div>
             </div>
 
-            <!-- Step 4 -->
             <div class="guide-step">
               <div class="guide-step-num">04</div>
               <div class="guide-step-content">
-                <div class="guide-step-title">
-                  <span class="guide-step-emoji">🎁</span>
-                  Mükafat (Bonus) əlavə edin
-                </div>
-                <div class="guide-step-desc">
-                  <strong>Bonuses</strong> xanasına həmin ay üçün təyin edilmiş mükafat məbləğini manatla daxil edin. Mükafat <strong>vergitutma bazasına daxil edilir</strong> — yəni digər gəlirlər kimi eyni vergi qaydalarına tabedir. Mükafat olmadıqda bu xanada <span class="guide-tag">0</span> qalmalıdır.
-                </div>
-              </div>
-            </div>
-
-            <!-- Step 5 -->
-            <div class="guide-step">
-              <div class="guide-step-num">05</div>
-              <div class="guide-step-content">
-                <div class="guide-step-title">
-                  <span class="guide-step-emoji">✦</span>
-                  Nəticəni oxuyun
-                </div>
-                <div class="guide-step-desc">
-                  <strong>Calculate</strong> düyməsini sıxın (məlumatları dəyişdikdə nəticə avtomatik yenilənir). Ekranda 3 əsas blok görünəcək:<br><br>
-                  · <strong>Hesablama nəticəsi</strong> — Netto (əldə ediləcək), brüt cəm, tutulmalar, saatlıq və günlük tarif<br>
-                  · <strong>Hesablanmış məbləğlər</strong> — Hər ödəniş komponentinin ayrı-ayrı dəyəri<br>
-                  · <strong>Vergilər və tutulmalar</strong> — Hər verginin məbləği
-                </div>
-              </div>
-            </div>
-
-            <!-- Step 6 — taxes info -->
-            <div class="guide-step">
-              <div class="guide-step-num">06</div>
-              <div class="guide-step-content">
-                <div class="guide-step-title">
-                  <span class="guide-step-emoji">🏛️</span>
-                  Vergilər haqqında
-                </div>
-                <div class="guide-step-desc">
-                  Kalkulyator aşağıdakı <strong>4 məcburi tutulmanı</strong> Azərbaycan qanunvericiliyinə uyğun hesablayır:
-                </div>
+                <div class="guide-step-title"><span class="guide-step-emoji">🏛️</span>Vergilər haqqında</div>
+                <div class="guide-step-desc">Kalkulyator aşağıdakı <strong>4 məcburi tutulmanı</strong> hesablayır:</div>
                 <div class="guide-tax-grid">
                   <div class="guide-tax-item">
                     <span class="guide-tax-name">PGV — Gəlir vergisi</span>
                     <span class="guide-tax-rate">3%</span>
-                    <span class="guide-tax-note">Vergitutma bazası = Cəmi gəlir − 200 ₼. 200 ₼-ə qədər hissə vergidən azaddır.</span>
+                    <span class="guide-tax-note">Vergitutma bazası = Cəmi gəlir − 200 ₼</span>
                   </div>
                   <div class="guide-tax-item">
                     <span class="guide-tax-name">İşsizlik sığortası</span>
                     <span class="guide-tax-rate">0.5%</span>
-                    <span class="guide-tax-note">Cəmi hesablanmış məbləğdən tutulur. Azad hiss yoxdur.</span>
+                    <span class="guide-tax-note">Cəmi hesablanmış məbləğdən tutulur</span>
                   </div>
                   <div class="guide-tax-item">
                     <span class="guide-tax-name">DSMF — Pensiya fondu</span>
                     <span class="guide-tax-rate">6 ₼ + 10%</span>
-                    <span class="guide-tax-note">Sabit 6 ₼ + 200 ₼-dən yuxarı hissənin 10%-i.</span>
+                    <span class="guide-tax-note">Sabit 6 ₼ + 200 ₼-dən yuxarı hissənin 10%-i</span>
                   </div>
                   <div class="guide-tax-item">
                     <span class="guide-tax-name">Tibbi sığorta</span>
                     <span class="guide-tax-rate">2%</span>
-                    <span class="guide-tax-note">Cəmi hesablanmış məbləğdən tutulur. Azad hiss yoxdur.</span>
+                    <span class="guide-tax-note">Cəmi hesablanmış məbləğdən tutulur</span>
                   </div>
                 </div>
                 <div class="guide-note">
-                  ✓ Bu normalar Azərbaycan Vergi Məcəlləsinə və Əmək Məcəlləsinə uyğundur. İstehsalat təqvimi hər il <a href="https://sosial.gov.az/az/faydali/istehsalat-teqvimi" target="_blank" style="color:inherit;text-decoration:underline">sosial.gov.az</a> saytında dərc olunur. Konkret hallar üçün mühasibinizlə məsləhətləşin.
+                  ✓ Bu normalar Azərbaycan Vergi Məcəlləsinə və Əmək Məcəlləsinə uyğundur. Konkret hallar üçün mühasibinizlə məsləhətləşin.
                 </div>
               </div>
             </div>
 
-          </div><!-- /guide-steps -->
-        </div><!-- /guide-body-inner -->
-      </div><!-- /guide-body -->
-    </div><!-- /guide-accordion -->
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- MONTHLY NORMS -->
@@ -1153,10 +1317,101 @@
       </div>
     </div>
 
-    <div class="gross-field">
-      <label>Gross Salary</label>
-      <input id="grossSalary" type="number" step="0.01" value="" placeholder="0.00" />
-      <span class="currency-symbol">₼</span>
+    <!-- SALARY MODE TOGGLE -->
+    <div class="salary-mode-toggle">
+      <button class="salary-mode-btn active" id="modeSingle" onclick="setSalaryMode('single')">
+        💰 Sabit maaş
+      </button>
+      <button class="salary-mode-btn" id="modeSplit" onclick="setSalaryMode('split')">
+        ✂️ Bölünmüş maaş
+      </button>
+    </div>
+
+    <!-- SINGLE SALARY -->
+    <div id="singleSalaryPanel">
+      <div class="gross-field">
+        <label>Gross Salary</label>
+        <input id="grossSalary" type="number" step="0.01" value="" placeholder="0.00" />
+        <span class="currency-symbol">₼</span>
+      </div>
+    </div>
+
+    <!-- SPLIT SALARY -->
+    <div class="split-salary-panel" id="splitSalaryPanel">
+      <div class="split-salary-info">
+        ✂️ Ayın müxtəlif tarixlərindən fərqli brüt maaş tətbiq olunan hallar üçün — məsələn, ayın ortasında maaş artımı. Hər dövr üçün gün aralığını və brüt maaşı daxil edin.
+      </div>
+
+      <div class="split-grid">
+        <!-- Period 1 -->
+        <div class="split-period-block">
+          <div class="split-period-label">
+            <span class="split-period-dot p1"></span>
+            I Dövr
+          </div>
+          <div class="split-day-row">
+            <span class="split-day-label">Tarix aralığı:</span>
+            <div class="split-day-inputs">
+              <input type="number" class="split-day-input" id="p1From" value="1" min="1" max="31" />
+              <span class="split-day-sep">–</span>
+              <input type="number" class="split-day-input" id="p1To" value="15" min="1" max="31" />
+            </div>
+          </div>
+          <div class="split-salary-sublabel">Brüt maaş (I dövr)</div>
+          <div class="split-salary-input-wrap">
+            <input type="number" class="split-salary-input" id="grossP1" step="0.01" placeholder="0.00" />
+            <span class="split-salary-currency">₼</span>
+          </div>
+          <div class="split-period-hours-pill">
+            Hesablanmış saatlar: <strong id="p1HoursDisplay">—</strong>
+          </div>
+        </div>
+
+        <div class="split-arrow">→</div>
+
+        <!-- Period 2 -->
+        <div class="split-period-block">
+          <div class="split-period-label">
+            <span class="split-period-dot p2"></span>
+            II Dövr
+          </div>
+          <div class="split-day-row">
+            <span class="split-day-label">Tarix aralığı:</span>
+            <div class="split-day-inputs">
+              <input type="number" class="split-day-input" id="p2From" value="16" min="1" max="31" />
+              <span class="split-day-sep">–</span>
+              <input type="number" class="split-day-input" id="p2To" value="31" min="1" max="31" />
+            </div>
+          </div>
+          <div class="split-salary-sublabel">Brüt maaş (II dövr)</div>
+          <div class="split-salary-input-wrap">
+            <input type="number" class="split-salary-input" id="grossP2" step="0.01" placeholder="0.00" />
+            <span class="split-salary-currency">₼</span>
+          </div>
+          <div class="split-period-hours-pill">
+            Hesablanmış saatlar: <strong id="p2HoursDisplay">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary bar -->
+      <div class="split-summary-bar" id="splitSummaryBar">
+        <div class="split-summary-item">
+          <span class="split-summary-dot p1"></span>
+          I dövr: <span class="split-summary-val" id="sumP1Days">—</span>
+        </div>
+        <div class="split-summary-item">
+          <span class="split-summary-dot p2"></span>
+          II dövr: <span class="split-summary-val" id="sumP2Days">—</span>
+        </div>
+        <div class="split-summary-item">
+          Aylıq norma: <span class="split-summary-val" id="sumTotalNorm">—</span>
+        </div>
+        <div class="split-summary-item" id="splitWarnItem" style="display:none">
+          <span class="split-summary-dot warn"></span>
+          <span class="split-warning" id="splitWarnText"></span>
+        </div>
+      </div>
     </div>
 
     <div class="input-rows">
@@ -1339,13 +1594,28 @@ const AZ_NORMS_2026 = [
   { month: "Dekabr",   hours: 175, holidays: ["Dek 31 (Həmrəylik günü)"] }
 ];
 
+// Month day counts (2026 — not a leap year)
+const MONTH_DAYS_2026 = [31,28,31,30,31,30,31,31,30,31,30,31];
+
 const today = new Date();
 const currentMonth = today.getMonth();
 
+let salaryMode = 'single'; // 'single' | 'split'
+
 // Guide accordion toggle
 function toggleGuide() {
-  const acc = document.getElementById('guideAccordion');
-  acc.classList.toggle('open');
+  document.getElementById('guideAccordion').classList.toggle('open');
+}
+
+// Salary mode toggle
+function setSalaryMode(mode) {
+  salaryMode = mode;
+  document.getElementById('modeSingle').classList.toggle('active', mode === 'single');
+  document.getElementById('modeSplit').classList.toggle('active', mode === 'split');
+  document.getElementById('singleSalaryPanel').style.display = mode === 'single' ? 'block' : 'none';
+  document.getElementById('splitSalaryPanel').classList.toggle('visible', mode === 'split');
+  updateSplitSummary();
+  calculate();
 }
 
 // Stepper helper
@@ -1389,6 +1659,13 @@ function populateMonths() {
   sel.addEventListener('change', () => {
     const idx = parseInt(sel.value);
     document.getElementById('monthlyHours').value = AZ_NORMS_2026[idx].hours;
+    // Update split period "to" day to match month's last day
+    document.getElementById('p1To').value = Math.min(
+      parseInt(document.getElementById('p1To').value),
+      MONTH_DAYS_2026[idx]
+    );
+    document.getElementById('p2To').value = MONTH_DAYS_2026[idx];
+    updateSplitSummary();
     calculate();
   });
 }
@@ -1402,10 +1679,71 @@ function setSum(id, val) {
   el.classList.toggle('zero', val === 0);
 }
 
+/**
+ * Returns how many working hours fall in [dayFrom, dayTo] for a given month,
+ * proportional to total calendar days in that range vs. the total month days.
+ * This is a simple linear interpolation — the norm hours are distributed
+ * evenly over calendar days of the month.
+ */
+function splitHours(monthNorm, monthDays, dayFrom, dayTo) {
+  const clampedFrom = Math.max(1, Math.min(dayFrom, monthDays));
+  const clampedTo   = Math.max(clampedFrom, Math.min(dayTo, monthDays));
+  const span = clampedTo - clampedFrom + 1;
+  return (monthNorm / monthDays) * span;
+}
+
+function updateSplitSummary() {
+  const monthIdx  = parseInt(document.getElementById('monthSelect').value);
+  const monthDays = MONTH_DAYS_2026[monthIdx];
+  const norm      = AZ_NORMS_2026[monthIdx].hours;
+
+  const p1From = parseInt(document.getElementById('p1From').value) || 1;
+  const p1To   = parseInt(document.getElementById('p1To').value)   || 15;
+  const p2From = parseInt(document.getElementById('p2From').value) || 16;
+  const p2To   = parseInt(document.getElementById('p2To').value)   || monthDays;
+
+  const h1 = splitHours(norm, monthDays, p1From, p1To);
+  const h2 = splitHours(norm, monthDays, p2From, p2To);
+
+  document.getElementById('p1HoursDisplay').textContent = h1.toFixed(2) + ' saat';
+  document.getElementById('p2HoursDisplay').textContent = h2.toFixed(2) + ' saat';
+
+  // Days labels
+  const d1 = Math.max(1, Math.min(p1To, monthDays)) - Math.max(1, Math.min(p1From, monthDays)) + 1;
+  const d2 = Math.max(1, Math.min(p2To, monthDays)) - Math.max(1, Math.min(p2From, monthDays)) + 1;
+
+  document.getElementById('sumP1Days').textContent = `${p1From}–${p1To} (${d1} gün)`;
+  document.getElementById('sumP2Days').textContent = `${p2From}–${p2To} (${d2} gün)`;
+  document.getElementById('sumTotalNorm').textContent = norm + ' saat';
+
+  // Overlap/gap check
+  const warnEl   = document.getElementById('splitWarnItem');
+  const warnText = document.getElementById('splitWarnText');
+
+  // Simple check: p1 should end before p2 starts
+  if (p1To >= p2From) {
+    warnEl.style.display = 'flex';
+    warnText.textContent = '⚠ Dövrlərin tarixləri üst-üstə düşür';
+  } else if (p1To + 1 < p2From) {
+    warnEl.style.display = 'flex';
+    warnText.textContent = `⚠ ${p1To + 1}–${p2From - 1} günlər hər iki dövrə aid deyil`;
+  } else {
+    warnEl.style.display = 'none';
+  }
+}
+
+function getEffectiveHourlyRate(monthIdx, totalHours) {
+  // For single mode: just grossSalary / norm
+  const monthNorm   = AZ_NORMS_2026[monthIdx].hours;
+  const grossSalary = parseFloat(document.getElementById('grossSalary').value) || 0;
+  return grossSalary / monthNorm;
+}
+
 function calculate() {
-  const grossSalary  = parseFloat(document.getElementById('grossSalary').value) || 0;
-  const monthIdx     = parseInt(document.getElementById('monthSelect').value);
-  const monthlyNorm  = AZ_NORMS_2026[monthIdx].hours;
+  const monthIdx    = parseInt(document.getElementById('monthSelect').value);
+  const monthNorm   = AZ_NORMS_2026[monthIdx].hours;
+  const monthDays   = MONTH_DAYS_2026[monthIdx];
+
   const monthlyHours = parseFloat(document.getElementById('monthlyHours').value) || 0;
   const overtime     = parseFloat(document.getElementById('overtime').value) || 0;
   const nightHours   = parseFloat(document.getElementById('nightHours').value) || 0;
@@ -1413,17 +1751,78 @@ function calculate() {
   const holidayHours = parseFloat(document.getElementById('holidayHours').value) || 0;
   const bonus        = parseFloat(document.getElementById('bonus').value) || 0;
 
-  const hourlyRate      = grossSalary / monthlyNorm;
-  const dailySalary     = hourlyRate * 8;
-  const eveningAddPerHr = hourlyRate * 0.2;
-  const nightAddPerHr   = hourlyRate * 0.4;
-  const doublePayPerHr  = hourlyRate * 2;
+  let regularPay = 0, overtimePay = 0, nightAddPay = 0, eveningAddPay = 0, holidayPay = 0;
+  let hourlyRate = 0, dailySalary = 0;
+  let splitDetails = '';
 
-  const regularPay    = hourlyRate * (monthlyHours - overtime - holidayHours);
-  const overtimePay   = overtime * doublePayPerHr;
-  const nightAddPay   = nightHours * nightAddPerHr;
-  const eveningAddPay = eveningHours * eveningAddPerHr;
-  const holidayPay    = holidayHours * doublePayPerHr;
+  if (salaryMode === 'single') {
+    const grossSalary = parseFloat(document.getElementById('grossSalary').value) || 0;
+    hourlyRate      = grossSalary / monthNorm;
+    dailySalary     = hourlyRate * 8;
+
+    regularPay    = hourlyRate * (monthlyHours - overtime - holidayHours);
+    overtimePay   = overtime * hourlyRate * 2;
+    nightAddPay   = nightHours * hourlyRate * 0.4;
+    eveningAddPay = eveningHours * hourlyRate * 0.2;
+    holidayPay    = holidayHours * hourlyRate * 2;
+
+  } else {
+    // SPLIT MODE
+    const p1From = parseInt(document.getElementById('p1From').value) || 1;
+    const p1To   = parseInt(document.getElementById('p1To').value)   || 15;
+    const p2From = parseInt(document.getElementById('p2From').value) || 16;
+    const p2To   = parseInt(document.getElementById('p2To').value)   || monthDays;
+    const grossP1 = parseFloat(document.getElementById('grossP1').value) || 0;
+    const grossP2 = parseFloat(document.getElementById('grossP2').value) || 0;
+
+    // Hours per period (norm-proportional by calendar days)
+    const normH1 = splitHours(monthNorm, monthDays, p1From, p1To);
+    const normH2 = splitHours(monthNorm, monthDays, p2From, p2To);
+
+    const rate1 = grossP1 / monthNorm;
+    const rate2 = grossP2 / monthNorm;
+
+    // Effective blended hourly rate for display
+    const totalNormUsed = normH1 + normH2;
+    hourlyRate  = totalNormUsed > 0
+      ? (rate1 * normH1 + rate2 * normH2) / totalNormUsed
+      : 0;
+    dailySalary = hourlyRate * 8;
+
+    // Regular pay split: distribute actual worked hours proportionally
+    const totalActualRegular = Math.max(monthlyHours - overtime - holidayHours, 0);
+    const ratio1 = totalNormUsed > 0 ? normH1 / totalNormUsed : 0.5;
+    const ratio2 = 1 - ratio1;
+
+    const reg1 = totalActualRegular * ratio1;
+    const reg2 = totalActualRegular * ratio2;
+    regularPay = rate1 * reg1 + rate2 * reg2;
+
+    // Overtime, night, evening, holiday: use blended rate
+    overtimePay   = overtime * hourlyRate * 2;
+    nightAddPay   = nightHours * hourlyRate * 0.4;
+    eveningAddPay = eveningHours * hourlyRate * 0.2;
+    holidayPay    = holidayHours * hourlyRate * 2;
+
+    // Build split info for breakdown
+    splitDetails = `
+      <div class="breakdown-row" style="background:rgba(37,99,235,0.03)">
+        <span class="breakdown-name" style="display:flex;align-items:center;gap:6px">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--accent2);display:inline-block"></span>
+          I dövr (${p1From}–${p1To}) · ${fmt(rate1)} ₼/saat
+        </span>
+        <span class="breakdown-val">${fmt(rate1 * reg1)} ₼</span>
+      </div>
+      <div class="breakdown-row" style="background:rgba(22,163,74,0.03)">
+        <span class="breakdown-name" style="display:flex;align-items:center;gap:6px">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--accent3);display:inline-block"></span>
+          II dövr (${p2From}–${p2To}) · ${fmt(rate2)} ₼/saat
+        </span>
+        <span class="breakdown-val">${fmt(rate2 * reg2)} ₼</span>
+      </div>
+    `;
+  }
+
   const totalAccrued  = regularPay + overtimePay + nightAddPay + eveningAddPay + holidayPay + bonus;
 
   setSum('sum_monthly',  regularPay);
@@ -1432,13 +1831,13 @@ function calculate() {
   setSum('sum_evening',  eveningAddPay);
   setSum('sum_holiday',  holidayPay);
 
-  const pitBase  = Math.max(totalAccrued - 200, 0);
-  const pit      = pitBase * 0.03;
-  const unemploy = totalAccrued * 0.005;
-  const dsmf     = 6 + Math.max(totalAccrued - 200, 0) * 0.1;
-  const health   = totalAccrued * 0.02;
+  const pitBase       = Math.max(totalAccrued - 200, 0);
+  const pit           = pitBase * 0.03;
+  const unemploy      = totalAccrued * 0.005;
+  const dsmf          = 6 + Math.max(totalAccrued - 200, 0) * 0.1;
+  const health        = totalAccrued * 0.02;
   const totalWithheld = pit + unemploy + dsmf + health;
-  const netPay   = totalAccrued - totalWithheld;
+  const netPay        = totalAccrued - totalWithheld;
 
   document.getElementById('resultsRow').innerHTML = `
     <div class="result-box highlight">
@@ -1457,9 +1856,9 @@ function calculate() {
       <div class="result-sub">Vergi + DSMF + Sığorta</div>
     </div>
     <div class="result-box">
-      <div class="result-label">Saatlıq Tarif</div>
+      <div class="result-label">${salaryMode === 'split' ? 'Orta Saatlıq' : 'Saatlıq Tarif'}</div>
       <div class="result-value">${fmt(hourlyRate)} ₼</div>
-      <div class="result-sub">Norma: ${monthlyNorm} saat</div>
+      <div class="result-sub">Norma: ${monthNorm} saat</div>
     </div>
     <div class="result-box">
       <div class="result-label">Günlük Tarif</div>
@@ -1468,17 +1867,21 @@ function calculate() {
     </div>
     <div class="result-box">
       <div class="result-label">İş yükü</div>
-      <div class="result-value">${monthlyHours}/${monthlyNorm}</div>
-      <div class="result-sub">${monthlyHours > monthlyNorm ? '⚠ Yüksek' : monthlyHours < monthlyNorm ? '↓ Az' : '✓ Norma'}</div>
+      <div class="result-value">${monthlyHours}/${monthNorm}</div>
+      <div class="result-sub">${monthlyHours > monthNorm ? '⚠ Yüksek' : monthlyHours < monthNorm ? '↓ Az' : '✓ Norma'}</div>
     </div>
   `;
 
-  document.getElementById('accruedBreakdown').innerHTML = `
-    <div class="breakdown-header">Hesablanmış Komponentlər</div>
+  const splitLabelHtml = salaryMode === 'split' ? splitDetails : `
     <div class="breakdown-row">
       <span class="breakdown-name">Əsas ödəniş</span>
       <span class="breakdown-val">${fmt(regularPay)} ₼</span>
     </div>
+  `;
+
+  document.getElementById('accruedBreakdown').innerHTML = `
+    <div class="breakdown-header">Hesablanmış Komponentlər${salaryMode === 'split' ? ' · Bölünmüş maaş rejimi' : ''}</div>
+    ${splitLabelHtml}
     <div class="breakdown-row">
       <span class="breakdown-name">Overtime əlavəsi</span>
       <span class="breakdown-val ${overtimePay > 0 ? 'yellow' : ''}">${fmt(overtimePay)} ₼</span>
@@ -1532,15 +1935,23 @@ function calculate() {
       <span class="breakdown-val green big">${fmt(netPay)} ₼</span>
     </div>
   `;
+
+  // Update split summary if in split mode
+  if (salaryMode === 'split') updateSplitSummary();
 }
 
 // Init
 renderNorms();
 populateMonths();
 document.getElementById('monthlyHours').value = AZ_NORMS_2026[currentMonth].hours;
+document.getElementById('p2To').value = MONTH_DAYS_2026[currentMonth];
+updateSplitSummary();
 calculate();
 
-document.querySelectorAll('input').forEach(el => el.addEventListener('input', calculate));
+document.querySelectorAll('input').forEach(el => el.addEventListener('input', () => {
+  if (salaryMode === 'split') updateSplitSummary();
+  calculate();
+}));
 </script>
 </body>
 </html>
