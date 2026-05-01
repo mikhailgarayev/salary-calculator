@@ -2167,6 +2167,7 @@
               </div>
             </div>
             <div class="vac-result-formula" id="vacFormula"></div>
+            <div class="breakdown" id="vacTaxBreakdown" style="margin-top:12px"></div>
           </div>
 
         </div>
@@ -2821,6 +2822,7 @@ function calcVacation() {
   const health     = vacGross * 0.02;
   const totalTax   = pit + unemploy + dsmf + health;
   const vacNet     = vacGross - totalTax;
+  const vacTaxBreakdown = document.getElementById('vacTaxBreakdown');
 
   document.getElementById('vacGross').textContent = filled > 0 ? fmt(vacGross) + ' ₼' : '— ₼';
 
@@ -2834,6 +2836,30 @@ function calcVacation() {
       <span>${fmt(dailyRate)} ₼</span> × ${days} gün = <span>${fmt(vacGross)} ₼</span> gross<br>
       <span>${fmt(vacGross)} ₼</span> − vergilər (<span>${fmt(totalTax)} ₼</span>) = <span>${fmt(vacNet)} ₼</span> netto
     ` : 'Hesablama üçün gross maaşları daxil edin.';
+
+    vacTaxBreakdown.innerHTML = filled > 0 ? `
+      <div class="breakdown-header">Məzuniyyət üzrə vergi detalları</div>
+      <div class="breakdown-row">
+        <span class="breakdown-name">PGV bazası: max(${fmt(vacGross)} − 200, 0) = ${fmt(pitBase)} ₼</span>
+        <span class="breakdown-val red">3% → − ${fmt(pit)} ₼</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-name">İşsizlik sığortası: ${fmt(vacGross)} × 0.5%</span>
+        <span class="breakdown-val red">− ${fmt(unemploy)} ₼</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-name">DSMF: 6 ₼ + max(${fmt(vacGross)} − 200, 0) × 10%</span>
+        <span class="breakdown-val red">− ${fmt(dsmf)} ₼</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-name">Tibbi sığorta: ${fmt(vacGross)} × 2%</span>
+        <span class="breakdown-val red">− ${fmt(health)} ₼</span>
+      </div>
+      <div class="breakdown-row total">
+        <span class="breakdown-name" style="font-weight:600;color:var(--text)">Cəmi tutulmalar</span>
+        <span class="breakdown-val red">− ${fmt(totalTax)} ₼</span>
+      </div>
+    ` : '';
 
   } else {
     // Combined: vacation gross added to salary gross, taxes computed on total
@@ -2859,6 +2885,34 @@ function calcVacation() {
       Maaş gross: <span>${fmt(salaryGross)} ₼</span> + Məzuniyyət: <span>${fmt(vacGross)} ₼</span> = <span>${fmt(combinedGross)} ₼</span> ümumi gross<br>
       Vergilər: <span>${fmt(cTotalTax)} ₼</span> → Netto: <span>${fmt(cNet)} ₼</span>
     ` : 'Hesablama üçün gross maaşları daxil edin.';
+
+    vacTaxBreakdown.innerHTML = filled > 0 ? `
+      <div class="breakdown-header">Birləşmiş vergi detalları (maaş + məzuniyyət)</div>
+      <div class="breakdown-row">
+        <span class="breakdown-name">Ümumi gross: ${fmt(salaryGross)} + ${fmt(vacGross)} = ${fmt(combinedGross)} ₼</span>
+        <span class="breakdown-val">${fmt(combinedGross)} ₼</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-name">PGV bazası: max(${fmt(combinedGross)} − 200, 0) = ${fmt(cPitBase)} ₼</span>
+        <span class="breakdown-val red">3% → − ${fmt(cPit)} ₼</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-name">İşsizlik sığortası: ${fmt(combinedGross)} × 0.5%</span>
+        <span class="breakdown-val red">− ${fmt(cUnemp)} ₼</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-name">DSMF: 6 ₼ + max(${fmt(combinedGross)} − 200, 0) × 10%</span>
+        <span class="breakdown-val red">− ${fmt(cDsmf)} ₼</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="breakdown-name">Tibbi sığorta: ${fmt(combinedGross)} × 2%</span>
+        <span class="breakdown-val red">− ${fmt(cHealth)} ₼</span>
+      </div>
+      <div class="breakdown-row total">
+        <span class="breakdown-name" style="font-weight:600;color:var(--text)">Cəmi tutulmalar</span>
+        <span class="breakdown-val red">− ${fmt(cTotalTax)} ₼</span>
+      </div>
+    ` : '';
   }
 }
 
