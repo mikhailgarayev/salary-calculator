@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Əmək haqqı kalkulyatoru · 2026</title>
+<meta name="description" content="Ələ çatan əmək haqqını və məzuniyyət haqqını hesablayın. Gəlir vergisi, DSMF, işsizlikdən sığorta və icbari tibbi sığorta 2026-cı il dərəcələri ilə.">
+<meta name="theme-color" content="#171a17">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-icon.png">
+<script>document.documentElement.classList.add('js');try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.dataset.motion='reduced'}catch(e){}</script>
+<style>
+:root{
+  --paper:#f3f2eb;--paper-2:#e8e9df;--ink:#171a17;--ink-2:#22251f;
+  --lime:#d6fd55;--lime-2:#c3ec3c;--muted:#66685f;--line:#d4d5c9;--dark-line:#3a3d34;
+  --red:#c2462b;--soft:#aaafa1;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --mono:'Courier New',ui-monospace,monospace;
+  --serif:Georgia,'Times New Roman',serif;
+  --pad:4.5%;
+  font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:var(--paper);font-synthesis:none;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:auto;-webkit-text-size-adjust:100%}
+body{margin:0;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-weight:500}
+em{font-family:var(--serif);font-weight:400;letter-spacing:-.06em}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+svg{display:block}
+::selection{background:var(--lime);color:var(--ink)}
+:focus-visible{outline:2px solid #768e21;outline-offset:4px}
+.mono{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.055em;line-height:1.4}
+.up{text-transform:uppercase}
+.pad{padding-left:var(--pad);padding-right:var(--pad)}
+@media(min-width:1600px){.pad{padding-left:max(4.5%,calc((100vw - 1480px)/2));padding-right:max(4.5%,calc((100vw - 1480px)/2))}}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
+
+/* ── Preloader ── */
+.loader{position:fixed;inset:0;z-index:200;background:var(--ink);color:var(--paper);display:flex;flex-direction:column;justify-content:space-between;padding:32px var(--pad)}
+.loader-top{display:flex;justify-content:space-between;color:var(--soft)}
+.loader-count{font-size:clamp(110px,22vw,340px);line-height:.8;letter-spacing:-.08em;color:var(--lime);font-variant-numeric:tabular-nums;display:flex;align-items:flex-end;justify-content:space-between}
+.loader-count small{font-size:.22em;letter-spacing:-.04em;color:var(--paper);font-family:var(--serif);font-style:italic;padding-bottom:.25em}
+.loader-bar{height:1px;background:var(--dark-line);margin-top:28px;position:relative;overflow:hidden}
+.loader-bar i{position:absolute;inset:0;background:var(--lime);transform:scaleX(0);transform-origin:left}
+html:not(.js) .loader,[data-motion=reduced] .loader{display:none}
+
+/* ── Cursor ── */
+.cursor,.cursor-dot{position:fixed;top:0;left:0;pointer-events:none;z-index:190;border-radius:50%;opacity:0}
+.cursor{width:42px;height:42px;margin:-21px 0 0 -21px;border:1px solid var(--ink);transition:width .35s var(--ease),height .35s var(--ease),margin .35s var(--ease),background .3s,border-color .3s;display:grid;place-items:center;font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--ink)}
+.cursor-dot{width:6px;height:6px;margin:-3px 0 0 -3px;background:var(--ink)}
+.cursor span{opacity:0;transition:opacity .2s}
+.cursor.is-hover{width:72px;height:72px;margin:-36px 0 0 -36px;background:var(--lime);border-color:var(--lime)}
+.cursor.is-hover span{opacity:1}
+.cursor.on-dark{border-color:var(--paper)}
+.cursor-dot.on-dark{background:var(--lime)}
+.cursor.is-hidden,.cursor-dot.is-hidden{opacity:0!important}
+@media(pointer:coarse){.cursor,.cursor-dot{display:none}}
+
+/* ── Progress & header ── */
+.progress{position:fixed;top:0;left:0;width:100%;height:3px;background:#fff;transform:scaleX(0);transform-origin:left;z-index:120;mix-blend-mode:difference}
+.hdr{position:fixed;top:0;left:0;right:0;height:84px;display:flex;align-items:center;justify-content:space-between;gap:24px;z-index:100;transition:transform .5s var(--ease),background .4s,border-color .4s;border-bottom:1px solid transparent}
+.hdr.scrolled{background:#f3f2ebe6;backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border-color:#171a1720}
+.hdr.hide{transform:translateY(-100%)}
+.brand{display:flex;align-items:center;gap:16px}
+.brand-mark{font-size:40px;font-weight:800;letter-spacing:-5px;line-height:1;display:flex;align-items:center}
+.brand-mark span{font-weight:400;font-size:26px;letter-spacing:0;margin-left:6px;display:inline-block;animation:spin 12s linear infinite}
+.brand-name{font-size:12px;line-height:1.15;letter-spacing:-.02em;transform:translateY(.55em)}
+.nav{display:flex;gap:30px;font-size:12px}
+.nav a{position:relative;padding:14px 0;display:flex;gap:6px;align-items:baseline}
+.nav a sup{font-family:var(--mono);font-size:8px;color:var(--muted)}
+.nav a::after{content:'';position:absolute;bottom:8px;left:0;width:100%;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .35s var(--ease)}
+.nav a:hover::after{transform:scaleX(1);transform-origin:left}
+.cta{display:inline-flex;align-items:center;gap:18px;background:var(--ink);color:var(--paper);border-radius:50px;padding:14px 22px;font-size:12px;transition:background .25s,color .25s}
+.cta:hover{background:var(--lime);color:var(--ink)}
+.cta span{font-size:18px;line-height:1}
+
+/* ── Hero ── */
+.hero{min-height:760px;height:100svh;max-height:1080px;padding-top:130px;display:flex;flex-direction:column;overflow:hidden;position:relative;isolation:isolate}
+.hero-top{display:flex;justify-content:space-between;align-items:center}
+.hero-top .mono{display:flex;align-items:center;gap:10px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 4px #171a1710;animation:blink 2s infinite}
+.hero-copy{position:relative;z-index:3;padding-top:56px;pointer-events:none}
+.hero h1{font-size:clamp(76px,10.4vw,168px);line-height:.96;letter-spacing:-.085em;max-width:980px}
+.hero h1 .ln{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}
+.hero h1 .ln>span{display:block}
+.hero h1 em{position:relative;display:inline-block;padding-right:.08em}
+.hero h1 em::after{content:'';position:absolute;left:4px;right:0;bottom:.12em;height:.07em;border-radius:50%;background:var(--lime);transform:rotate(-4deg) scaleX(var(--u,1));transform-origin:left;z-index:-1}
+.hero-intro{display:flex;gap:24px;margin-top:34px;max-width:540px}
+.rule{width:43px;height:1px;background:var(--ink);margin-top:10px;flex-shrink:0}
+.hero-intro p{font-size:16px;line-height:1.5;letter-spacing:-.025em}
+.hero-intro .role{margin-top:14px;color:var(--muted);font-size:11px;letter-spacing:0}
+.round-link{display:inline-flex;align-items:center;gap:14px;font-size:12px;pointer-events:auto}
+.hero-copy>.round-link{margin-top:30px;margin-left:67px}
+.round-arrow{width:46px;height:46px;display:grid;place-items:center;border:1px solid #171a1750;border-radius:50%;font-size:22px;transition:background .3s,color .3s,transform .5s var(--ease)}
+.round-link:hover .round-arrow{background:var(--ink);color:var(--paper);transform:rotate(-45deg)}
+.dark .round-arrow{border-color:#f3f2eb50}
+.dark .round-link:hover .round-arrow{background:var(--lime);color:var(--ink)}
+
+.hero-art{position:absolute;right:-4%;top:110px;width:58%;height:calc(100% - 170px);z-index:1}
+.orb-wrap{position:absolute;inset:0}
+.orbit{position:absolute;left:50%;top:50%;border:1px solid #171a171f;border-radius:50%;transform:translate(-50%,-50%) rotate(var(--r,0deg))}
+.orbit.o1{width:78%;aspect-ratio:1.55}
+.orbit.o2{width:52%;aspect-ratio:.62;--r:28deg}
+.orbit.o3{width:34%;aspect-ratio:1;border-style:dashed;animation:spin 40s linear infinite}
+.coin{position:absolute;left:50%;top:50%;width:min(23vw,300px);aspect-ratio:1;margin:calc(min(23vw,300px) / -2) 0 0 calc(min(23vw,300px) / -2);border-radius:50%;background:var(--lime);display:grid;place-items:center;box-shadow:inset 0 -18px 40px #9fc21f55,0 40px 80px -30px #768e2166}
+.coin b{font-size:min(13vw,170px);font-weight:400;line-height:1;transform:translateY(-4%)}
+.coin::before{content:'';position:absolute;inset:9%;border-radius:50%;border:1px solid #171a1733}
+.coin-text{position:absolute;inset:-14%;animation:spin 26s linear infinite}
+.coin-text text{font-family:var(--mono);font-size:7.2px;letter-spacing:2.6px;fill:var(--ink)}
+.chip-orb{position:absolute;left:50%;top:50%;font-family:var(--mono);font-size:11px;padding:9px 13px;border-radius:40px;background:var(--paper);border:1px solid #171a1740;white-space:nowrap;will-change:transform}
+.chip-orb.ink{background:var(--ink);color:var(--lime);border-color:var(--ink)}
+.art-tag{position:absolute;right:16%;bottom:6%;display:flex;align-items:center;gap:11px;font-size:10px;z-index:4;transform:rotate(-6deg);background:var(--paper);padding:12px 18px;border:1px solid #171a1730;border-radius:3px}
+.art-tag b{font-size:26px;font-weight:400;line-height:1}
+.axis{position:absolute;font-size:20px;font-weight:300;color:#777a6e}
+.hero-bottom{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;padding:30px 0 26px;position:relative;z-index:5;font-size:10px}
+.scroll-cue{display:flex;align-items:center;gap:16px}
+.scroll-cue span{font-size:20px;animation:nudge 2s infinite}
+
+/* ── Marquee ── */
+.marquee{border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);padding:20px 0;overflow:hidden;transform:rotate(-1.7deg);width:104%;margin:0 -2%;position:relative;z-index:6;background:var(--lime)}
+.marquee.m2{background:var(--ink);color:var(--paper);transform:rotate(1.4deg);margin-top:-30px;z-index:5}
+.marquee-track{display:flex;width:max-content;will-change:transform}
+.marquee-track span{white-space:nowrap;font-size:36px;font-weight:500;letter-spacing:-.05em;display:flex;align-items:center}
+.marquee-track b{font-size:30px;font-weight:400;padding:0 40px;display:inline-block}
+.marquee.m2 b{color:var(--lime)}
+.marquee-track em{padding:0 .1em}
+
+/* ── Sections ── */
+.sec{position:relative;padding-top:120px;padding-bottom:120px}
+.dark{background:var(--ink);color:var(--paper)}
+.sec-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.sec-sym{font-size:60px;line-height:.8}
+.mini{text-align:right;font-size:10px;color:var(--muted)}
+.dark .mini{color:var(--soft)}
+.heading{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin:56px 0 64px}
+.heading h2{font-size:clamp(48px,6vw,96px);line-height:1.02;letter-spacing:-.07em;max-width:900px}
+.heading p{font-size:13px;line-height:1.6;color:var(--muted);max-width:320px;padding-bottom:6px}
+.dark .heading p{color:var(--soft)}
+.dark h2 em{color:var(--lime)}
+.split-w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+.split-w>span{display:inline-block;will-change:transform}
+
+/* ── Calculator ── */
+.calc{display:grid;grid-template-columns:1fr 440px;gap:6%;align-items:start}
+.panel{border-top:1px solid var(--ink);padding-top:26px}
+.panel+.panel{margin-top:56px}
+.panel-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:28px;gap:16px}
+.panel-h h3{font-size:30px;letter-spacing:-.05em;line-height:1.05}
+.panel-h .mono{color:var(--muted)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.month-field{max-width:320px}
+.field{margin-bottom:22px;position:relative}
+label,.lbl{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+input[type=text],input[type=number],input[type=date],select{
+  width:100%;padding:12px 0 11px;background:transparent;border:0;border-bottom:1px solid #171a1755;border-radius:0;
+  font:inherit;font-size:16px;color:var(--ink);outline:none;-webkit-appearance:none;appearance:none;transition:border-color .25s}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+input:focus,select:focus{border-color:var(--ink)}
+input::placeholder{color:#171a1740}
+.uline{position:relative}
+.uline::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--lime-2);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease);pointer-events:none}
+.uline:focus-within::after{transform:scaleX(1)}
+select{cursor:pointer;padding-right:26px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23171a17' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 2px center}
+input[type=date]{font-size:15px;min-height:46px}
+.cur{position:absolute;right:0;bottom:12px;font-size:16px;color:var(--muted);pointer-events:none}
+.big input{font-size:clamp(46px,6vw,86px);letter-spacing:-.06em;padding:4px 70px 10px 0;line-height:1.05;font-variant-numeric:tabular-nums}
+.big .cur{font-size:clamp(30px,3.4vw,50px);bottom:18px;color:var(--ink);font-family:var(--serif);font-style:italic}
+
+.seg{position:relative;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--ink);border-radius:50px;padding:4px;margin:6px 0 30px;max-width:420px}
+.seg-ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:50px;background:var(--ink);transition:transform .55s var(--ease)}
+.seg[data-tab=split] .seg-ind{transform:translateX(100%)}
+.tab{position:relative;z-index:1;padding:11px 12px;font-size:13px;border-radius:50px;transition:color .35s}
+.tab.active{color:var(--lime)}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 0}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid #171a1730;border-radius:40px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em}
+.chip.l{background:var(--lime);border-color:var(--lime)}
+.chip svg{flex-shrink:0}
+
+.steps{margin-top:34px}
+.sr{display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px;padding:16px 0;border-top:1px solid var(--line);transition:padding .4s var(--ease)}
+.sr:last-child{border-bottom:1px solid var(--line)}
+.sr:hover{padding-left:10px}
+.sr-nm{font-size:17px;letter-spacing:-.03em;display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px}
+.sr-nm small{flex-basis:100%;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.04em}
+.rt{font-family:var(--mono);font-size:10px;background:var(--lime);padding:3px 7px;border-radius:3px;letter-spacing:.03em}
+.sc{display:flex;align-items:center;gap:6px}
+.sb{width:38px;height:38px;border-radius:50%;border:1px solid #171a1740;font-size:18px;display:grid;place-items:center;transition:background .25s,color .25s,transform .2s,border-color .25s;line-height:1}
+.sb:hover{background:var(--ink);color:var(--lime);border-color:var(--ink)}
+.sb:active{transform:scale(.88)}
+.si{width:64px!important;text-align:center;font-size:20px!important;padding:6px 0!important;border-bottom-color:transparent!important;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.si:focus{border-bottom-color:var(--ink)!important}
+.ot-note{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.45;background:var(--lime);color:var(--ink);padding:10px 12px;border-radius:4px}
+.bonus{margin-top:30px}
+
+/* Result card */
+.res{position:sticky;top:104px}
+.card{background:var(--ink);color:var(--paper);border-radius:6px;overflow:hidden;position:relative}
+.card-h{display:flex;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--dark-line);color:var(--soft)}
+.card-h .live{display:flex;align-items:center;gap:8px}
+.card-h .live i{width:6px;height:6px;border-radius:50%;background:var(--lime);animation:blink 1.4s infinite}
+.empty{padding:70px 28px 76px;text-align:center}
+.empty .star{font-size:88px;line-height:1;color:var(--lime);display:inline-block;animation:spin 10s linear infinite}
+.empty p{margin-top:22px;font-size:22px;letter-spacing:-.04em;line-height:1.25}
+.empty p em{color:var(--lime)}
+.empty .mono{color:var(--soft);margin-top:14px;display:block}
+.net{padding:26px 24px 22px}
+.net .mono{color:var(--soft)}
+.net-amt{font-size:clamp(52px,5vw,74px);letter-spacing:-.07em;line-height:1;margin-top:14px;color:var(--lime);font-variant-numeric:tabular-nums;white-space:nowrap}
+.net-amt span{font-family:var(--serif);font-style:italic;font-size:.55em;color:var(--paper);margin-left:.12em;letter-spacing:0}
+.net-sub{margin-top:12px;font-size:13px;color:var(--soft)}
+.net-sub b{color:var(--paper);font-weight:500}
+.bar{display:flex;height:12px;margin:22px 0 0;border-radius:20px;overflow:hidden;gap:2px;background:var(--dark-line)}
+.bar i{display:block;height:100%;transition:flex-grow .9s var(--ease);flex:0 0 0;min-width:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;font-family:var(--mono);font-size:9.5px;color:var(--soft);letter-spacing:.04em}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:8px;height:8px;border-radius:50%}
+.c-net{background:var(--lime)}.c-dsmf{background:#f3f2eb}.c-un{background:#bfc2b3}.c-its{background:#8b8e80}.c-pgv{background:#5c5f53}
+.bk{padding:4px 24px 20px}
+.bk-sec{display:flex;align-items:center;gap:12px;padding:18px 0 8px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
+.bk-sec::after{content:'';flex:1;height:1px;background:var(--dark-line)}
+.bk-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #2c2f28;font-size:14px;gap:12px}
+.bk-row:last-child{border-bottom:0}
+.bk-lbl{display:flex;align-items:center;gap:8px;color:#d7d9cf}
+.bk-val{font-variant-numeric:tabular-nums;white-space:nowrap}
+.bk-val.neg{color:#ff9d84}.bk-val.pos{color:var(--lime)}
+.tag{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:3px;border:1px solid var(--dark-line);color:var(--soft);letter-spacing:.03em}
+.tag.g{border-color:#d6fd5555;color:var(--lime)}
+.bk-tot{border-top:1px solid var(--paper)!important;border-bottom:0!important;margin-top:4px;font-weight:700}
+.bk-tot .bk-lbl{color:var(--paper)}
+.rates{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--dark-line)}
+.rates div{padding:18px 24px}
+.rates div+div{border-left:1px solid var(--dark-line)}
+.rates .mono{color:var(--soft);font-size:9.5px}
+.rates b{display:block;font-weight:500;font-size:24px;letter-spacing:-.05em;margin-top:6px;font-variant-numeric:tabular-nums}
+.res-note{margin-top:16px;font-size:11px;line-height:1.6;color:var(--muted);display:flex;gap:10px}
+
+/* ── Story (horizontal) ── */
+.story{padding-top:120px;overflow:hidden}
+.manifest{font-size:clamp(34px,4.6vw,72px);line-height:1.08;letter-spacing:-.06em;max-width:1200px;margin:60px 0 0}
+.manifest .word{opacity:.14;transition:none}
+.manifest em{color:var(--lime)}
+.hs{height:100vh;display:flex;align-items:center;margin-top:60px;position:relative}
+.hs-track{display:flex;gap:24px;padding-left:var(--pad);padding-right:var(--pad);will-change:transform}
+.hs-card{flex:0 0 min(420px,78vw);height:min(560px,70vh);border:1px solid var(--dark-line);border-radius:6px;padding:26px;display:flex;flex-direction:column;position:relative;overflow:hidden;background:var(--ink-2)}
+.hs-card .top{display:flex;justify-content:space-between;color:var(--soft)}
+.hs-card h3{font-size:34px;letter-spacing:-.05em;line-height:1.05;margin-top:auto}
+.hs-card .pct{font-family:var(--serif);font-style:italic;font-size:clamp(90px,9vw,150px);line-height:.9;letter-spacing:-.07em;color:var(--lime);margin-top:28px}
+.hs-card .val{font-size:30px;letter-spacing:-.05em;margin-top:16px;font-variant-numeric:tabular-nums}
+.hs-card p{font-size:13px;line-height:1.55;color:var(--soft);margin-top:12px;max-width:320px}
+.hs-card .share{height:3px;background:var(--dark-line);margin-top:22px;position:relative;overflow:hidden;border-radius:3px}
+.hs-card .share i{position:absolute;inset:0;background:var(--lime);transform-origin:left;transform:scaleX(0);transition:transform 1s var(--ease)}
+.hs-card.intro{background:transparent;border:0;padding-left:0;justify-content:space-between;flex-basis:min(380px,80vw)}
+.hs-card.intro h3{font-size:clamp(40px,4vw,62px);margin-top:0;line-height:1}
+.hs-card.intro h3 em{color:var(--lime)}
+.hs-card.gross{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.hs-card.gross .top,.hs-card.gross p{color:var(--muted)}
+.hs-card.gross .pct{color:var(--ink)}
+.hs-card.net-c{background:var(--lime);color:var(--ink);border-color:var(--lime)}
+.hs-card.net-c .top,.hs-card.net-c p{color:#3d4a12}
+.hs-card.net-c .pct{color:var(--ink)}
+.hs-card.net-c .share{background:#171a1722}.hs-card.net-c .share i{background:var(--ink)}
+.hs-card .big-sym{position:absolute;right:-20px;top:40px;font-size:220px;line-height:1;opacity:.06;pointer-events:none}
+.example{display:inline-flex;gap:8px;align-items:center;color:var(--soft);margin-top:18px}
+.example i{width:6px;height:6px;border-radius:50%;background:var(--lime)}
+
+/* ── Vacation ── */
+.vac{display:grid;grid-template-columns:.9fr 1.1fr;gap:8%;align-items:start}
+.vac-copy .big-q{font-size:clamp(30px,3vw,44px);letter-spacing:-.05em;line-height:1.1}
+.vac-copy .big-q em{background:var(--lime);padding:0 .12em;border-radius:4px}
+.formula{margin-top:34px;border-top:1px solid var(--ink);padding-top:20px}
+.formula .mono{color:var(--muted)}
+.formula-eq{font-size:22px;letter-spacing:-.04em;line-height:1.45;margin-top:12px}
+.formula-eq b{font-weight:500;background:var(--paper-2);padding:1px 8px;border-radius:30px;white-space:nowrap}
+.note{margin-top:22px;font-size:12px;line-height:1.7;color:var(--muted)}
+.dr{display:grid;grid-template-columns:1fr 40px 1fr;align-items:end;gap:10px}
+.dr-arr{text-align:center;font-size:22px;padding-bottom:10px}
+.dpill{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:40px;font-family:var(--mono);font-size:11px;margin-top:4px;border:1px solid #171a1730}
+.dpill.on{background:var(--ink);color:var(--lime);border-color:var(--ink)}
+.qf{display:flex;gap:14px;align-items:flex-end;margin:6px 0 22px}
+.qf .uline{flex:1}
+.btn{display:inline-flex;align-items:center;gap:12px;padding:13px 20px;border-radius:40px;background:var(--ink);color:var(--paper);font-size:12px;white-space:nowrap;transition:background .25s,color .25s}
+.btn:hover{background:var(--lime);color:var(--ink)}
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 18px}
+.mi label{margin-bottom:0;font-size:9.5px}
+.mi input{font-size:15px;padding:8px 0 7px}
+.vr{margin-top:34px;background:var(--lime);border-radius:6px;padding:24px 26px;position:relative;overflow:hidden}
+.vr-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:14px;border-bottom:1px solid #171a1718}
+.vr-row span:first-child{color:#3d4a12}
+.vr-row span:last-child{font-variant-numeric:tabular-nums}
+.vr-tot{border-bottom:0;padding-top:18px;align-items:flex-end}
+.vr-tot span:first-child{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink)!important}
+.vr-tot span:last-child{font-size:clamp(34px,3.4vw,52px);letter-spacing:-.06em;line-height:1}
+.vr .sym{position:absolute;right:-10px;top:-30px;font-size:160px;opacity:.08;line-height:1;pointer-events:none}
+
+/* ── Year (bars) ── */
+.year-wrap{background:var(--paper-2);border-radius:6px;padding:26px 26px 20px;position:relative}
+.year-top{display:flex;justify-content:space-between;color:var(--muted)}
+.bars{display:grid;grid-template-columns:repeat(12,1fr);gap:10px;height:320px;align-items:end;margin-top:30px}
+.bar-m{height:100%;display:flex;flex-direction:column;align-items:stretch;cursor:pointer;text-align:center}
+.bar-m .trk{flex:1;display:flex;align-items:flex-end;padding-top:22px}
+.bar-m .h{position:absolute;left:0;right:0;bottom:calc(100% + 6px);font-family:var(--mono);font-size:10px;color:var(--muted);transition:color .3s}
+.bar-m .col{width:100%;height:var(--h);background:var(--ink);border-radius:4px 4px 0 0;transform-origin:bottom;position:relative;transition:background .35s}
+.bar-m .col .hol{position:absolute;left:50%;top:8px;transform:translateX(-50%);font-family:var(--mono);font-size:9px;color:var(--lime);white-space:nowrap}
+.bar-m .n{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.04em;padding-top:10px;border-top:1px solid #171a1730}
+.bar-m:hover .col{background:#3a3d34}
+.bar-m.sel .col{background:var(--lime)}
+.bar-m.sel .col .hol{color:var(--ink)}
+.bar-m.sel .h{color:var(--ink);font-weight:700}
+.year-foot{display:flex;justify-content:space-between;margin-top:18px;font-size:12px;color:var(--muted);gap:20px;flex-wrap:wrap}
+.year-foot b{color:var(--ink);font-weight:500}
+
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:6%;margin-top:90px}
+.rules-copy h3{font-size:clamp(36px,3.6vw,56px);letter-spacing:-.06em;line-height:1.02}
+.rules-copy p{font-size:13px;line-height:1.65;color:var(--muted);margin-top:22px;max-width:380px}
+details{border-top:1px solid var(--line)}
+details:last-of-type{border-bottom:1px solid var(--line)}
+summary{list-style:none;display:grid;grid-template-columns:50px 1fr auto;align-items:center;padding:22px 0;cursor:pointer;font-size:22px;letter-spacing:-.04em}
+summary::-webkit-details-marker{display:none}
+summary .mono{color:var(--muted)}
+summary .pl{font-size:26px;font-weight:300;transition:transform .45s var(--ease)}
+details[open] summary .pl{transform:rotate(45deg)}
+.dc{padding:0 0 24px 50px;font-size:14px;line-height:1.8;color:#4b5043}
+.dc li{list-style:none;display:flex;justify-content:space-between;gap:20px;border-bottom:1px dashed var(--line);padding:6px 0}
+.dc li span:last-child{font-family:var(--mono);font-size:12px;color:var(--ink);white-space:nowrap}
+.dc ul{padding:0;margin:0}
+.dc p{margin-top:10px;font-size:12px;color:var(--muted)}
+
+/* ── Closing & footer ── */
+.closing{padding-top:110px;padding-bottom:60px;overflow:hidden}
+.closing .ast{font-size:110px;line-height:1;color:var(--lime);display:inline-block}
+.closing h2{font-size:clamp(64px,11vw,190px);line-height:.94;letter-spacing:-.085em;margin-top:30px}
+.closing h2 em{color:var(--lime)}
+.closing-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-top:60px;border-top:1px solid var(--dark-line);padding-top:28px}
+.closing-bottom p{font-size:15px;line-height:1.55;color:var(--soft);max-width:420px}
+.foot{padding-top:30px;padding-bottom:24px}
+.foot-meta{display:flex;justify-content:space-between;gap:20px;color:var(--soft);font-size:10px}
+.foot-meta a:hover{color:var(--lime)}
+.wordmark{font-size:clamp(60px,11.4vw,200px);letter-spacing:-.085em;line-height:.9;margin:50px 0 34px;white-space:nowrap;display:flex;align-items:flex-start}
+.wordmark span{font-size:.5em;color:var(--lime);margin-left:.1em;display:inline-block;animation:spin 14s linear infinite}
+.foot-bottom{display:flex;justify-content:space-between;border-top:1px solid var(--dark-line);padding-top:20px;font-size:12px;color:var(--soft);gap:20px}
+.foot-bottom a:hover{color:var(--lime)}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,calc(100% + 40px));background:var(--ink);color:var(--paper);padding:14px 20px;border-radius:40px;font-size:13px;z-index:150;display:flex;gap:10px;align-items:center;transition:transform .6s var(--ease);box-shadow:0 20px 40px -10px #0006}
+.toast i{width:8px;height:8px;border-radius:50%;background:var(--lime)}
+.toast.show{transform:translate(-50%,0)}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{50%{opacity:.25}}
+@keyframes nudge{50%{transform:translateY(5px)}}
+
+/* ── Responsive ── */
+@media(max-width:1100px){
+  .calc{grid-template-columns:1fr 380px;gap:5%}
+  .nav{gap:18px}
+  .hero-art{width:64%;right:-14%}
+}
+@media(max-width:900px){
+  .nav{display:none}
+  .calc,.vac,.rules{grid-template-columns:1fr}
+  .res{position:relative;top:0;margin-top:50px}
+  .rules{gap:40px}
+  .hero{height:auto;min-height:0;max-height:none}
+  .hero h1{font-size:13.4vw}
+  .hero-art{position:relative;right:auto;top:auto;width:100%;height:440px;margin-top:10px}
+  .hero-copy{padding-top:44px}
+  .hero-bottom{padding-top:10px}
+  .heading{display:block;margin:40px 0 44px}
+  .heading p{margin-top:20px}
+  .hs{height:auto;display:block;margin-top:50px;padding-bottom:40px}
+  .hs-track{flex-direction:column;transform:none!important}
+  .hs-card{flex:none;width:100%;height:auto;min-height:340px}
+  .hs-card.intro{min-height:0;padding-bottom:10px}
+  .coin{width:220px;margin:-110px 0 0 -110px}
+  .coin b{font-size:120px}
+}
+@media(max-width:560px){
+  :root{--pad:6%}
+  .hdr{height:72px}
+  .brand-mark{font-size:34px}
+  .brand-name{font-size:10px}
+  .cta{padding:11px 15px;font-size:10px;gap:10px}
+  .cta .t{display:none}
+  .hero{padding-top:104px}
+  .hero h1{font-size:15.6vw;letter-spacing:-.09em;line-height:1.02}
+  .hero-intro{gap:14px}
+  .rule{width:22px}
+  .hero-intro p{font-size:14px}
+  .hero-copy>.round-link{margin-left:36px}
+  .hero-art{height:360px}
+  .chip-orb{font-size:9px;padding:7px 10px}
+  .art-tag{right:6%;font-size:8px}
+  .hero-bottom{font-size:8px}
+  .marquee-track span{font-size:26px}
+  .marquee-track b{font-size:22px;padding:0 24px}
+  .sec{padding-top:80px;padding-bottom:80px}
+  .sec-sym{font-size:40px}
+  .heading h2{font-size:12vw}
+  .row{grid-template-columns:1fr;gap:0}
+  .big input{font-size:15vw}
+  .sr-nm{font-size:15px}
+  .sb{width:34px;height:34px}
+  .si{width:48px!important;font-size:17px!important}
+  .mg{grid-template-columns:1fr 1fr}
+  .bars{gap:4px;height:240px}
+  .bar-m .h,.bar-m .col .hol{display:none}
+  .bar-m .n{font-size:8px;letter-spacing:0}
+  summary{font-size:18px;grid-template-columns:40px 1fr auto}
+  .dc{padding-left:0}
+  .closing-bottom,.foot-meta,.foot-bottom{flex-direction:column;align-items:flex-start}
+  .manifest{font-size:9.4vw}
+}
+[data-motion=reduced] *,[data-motion=reduced] *::before,[data-motion=reduced] *::after{animation:none!important;transition-duration:.01ms!important}
+[data-motion=reduced] .manifest .word{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-top mono up"><span>₼ ✳ Əmək haqqı kalkulyatoru</span><span>Azərbaycan · 2026</span></div>
+  <div>
+    <div class="loader-count"><span id="ld-n">000</span><small>yüklənir</small></div>
+    <div class="loader-bar"><i id="ld-bar"></i></div>
+  </div>
+</div>
+
+<div class="cursor" id="cursor"><span>KLİK</span></div>
+<div class="cursor-dot" id="cursor-dot"></div>
+<div class="progress" id="progress"></div>
+
+<header class="hdr pad" id="hdr">
+  <a href="#top" class="brand" data-hover aria-label="Yuxarı">
+    <span class="brand-mark">₼<span>✳</span></span>
+    <span class="brand-name">Əmək haqqı<br>kalkulyatoru</span>
+  </a>
+  <nav class="nav" aria-label="Bölmələr">
+    <a href="#calc" data-hover>Kalkulyator<sup>01</sup></a>
+    <a href="#story" data-hover>Tutulmalar<sup>02</sup></a>
+    <a href="#vacation" data-hover>Məzuniyyət<sup>03</sup></a>
+    <a href="#year" data-hover>Dərəcələr<sup>04</sup></a>
+  </nav>
+  <a class="cta magnetic" href="#calc" data-hover><span class="t">Hesabla</span><span>↘</span></a>
+</header>
+
+<main id="top">
+
+<!-- ── HERO ── -->
+<section class="hero pad">
+  <div class="hero-top">
+    <span class="mono up"><i class="dot"></i>Azərbaycan · 2026</span>
+    <span class="mono up" style="color:var(--muted)">2026-cı il dərəcələri</span>
+  </div>
+
+  <div class="hero-copy">
+    <h1>
+      <span class="ln"><span>Maaşınızı</span></span>
+      <span class="ln"><span><em>hesablayın.</em></span></span>
+    </h1>
+    <div class="hero-intro" data-hero-fade>
+      <span class="rule"></span>
+      <div>
+        <p>Hesablanmış əmək haqqını daxil edin və tutulmalardan sonra ələ çatan məbləği dərhal görün. Gəlir vergisi, DSMF, işsizlikdən sığorta və icbari tibbi sığorta nəzərə alınır.</p>
+        <p class="role mono up">Əmək haqqı · Əlavə saatlar · Məzuniyyət haqqı</p>
+      </div>
+    </div>
+    <a href="#calc" class="round-link" data-hero-fade data-hover><span class="round-arrow">↘</span>Hesablamaya keçin</a>
+  </div>
+
+  <div class="hero-art" id="hero-art" aria-hidden="true">
+    <div class="orb-wrap" data-depth="0.4">
+      <div class="orbit o1"></div>
+      <div class="orbit o2"></div>
+      <div class="orbit o3"></div>
+    </div>
+    <div class="coin" id="coin" data-depth="1">
+      <svg class="coin-text" viewBox="0 0 100 100"><defs><path id="circ" d="M50,50 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs><text><textPath href="#circ">ƏMƏK HAQQI ✳ TUTULMALAR ✳ ƏLƏ ÇATAN ✳ </textPath></text></svg>
+      <b>₼</b>
+    </div>
+    <span class="chip-orb" data-orbit="0">DSMF 3% / 10%</span>
+    <span class="chip-orb ink" data-orbit="1">Gəlir vergisi 3–14%</span>
+    <span class="chip-orb" data-orbit="2">İTS 2%</span>
+    <span class="chip-orb" data-orbit="3">İşsizlik 0.5%</span>
+    <span class="chip-orb ink" data-orbit="4">Artıq iş ×2</span>
+    <span class="axis" style="top:8%;left:16%">+</span>
+    <span class="axis" style="bottom:14%;right:24%">+</span>
+    <div class="art-tag mono up"><b>✳</b>Ələ çatan = Hesablanan − Tutulmalar</div>
+  </div>
+
+  <div class="hero-bottom mono up">
+    <span>Məlumatlar heç yerə göndərilmir</span>
+    <span class="scroll-cue">Aşağı sürüşdürün <span>↓</span></span>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="marquee-track" data-marquee="1">
+  <span>Gəlir vergisi<b>✳</b>DSMF<b>✳</b>İşsizlikdən sığorta<b>✳</b>İcbari tibbi sığorta<b>✳</b>Artıq iş saatları<b>✳</b>Gecə saatları<b>✳</b>Məzuniyyət haqqı<b>✳</b></span>
+  <span>Gəlir vergisi<b>✳</b>DSMF<b>✳</b>İşsizlikdən sığorta<b>✳</b>İcbari tibbi sığorta<b>✳</b>Artıq iş saatları<b>✳</b>Gecə saatları<b>✳</b>Məzuniyyət haqqı<b>✳</b></span>
+</div></div>
+
+<!-- ── 01 CALCULATOR ── -->
+<section class="sec pad" id="calc">
+  <div class="sec-top" data-reveal>
+    <span class="sec-sym">↙</span>
+    <span class="mini mono up">01 / Kalkulyator<br>Aylıq əmək haqqı</span>
+  </div>
+  <div class="heading">
+    <h2 data-split>Əmək haqqının <em>hesablanması</em></h2>
+    <p data-reveal>Ayı seçin və hesablanmış əmək haqqını daxil edin. Əlavə saatlar və mükafat nəticəyə avtomatik əlavə olunur.</p>
+  </div>
+
+  <div class="calc">
+    <div>
+      <div class="panel" data-reveal>
+        <div class="panel-h"><h3>Əsas məlumatlar</h3><span class="mono up">A / 03</span></div>
+
+        <div class="field uline month-field">
+          <label for="month">Ay</label>
+          <select id="month" onchange="onMonth()">
+            <option value="0">Yanvar</option><option value="1">Fevral</option>
+            <option value="2">Mart</option><option value="3">Aprel</option>
+            <option value="4">May</option><option value="5">İyun</option>
+            <option value="6">İyul</option><option value="7">Avqust</option>
+            <option value="8">Sentyabr</option><option value="9">Oktyabr</option>
+            <option value="10">Noyabr</option><option value="11">Dekabr</option>
+          </select>
+        </div>
+
+        <div class="seg" id="seg" data-tab="fixed" role="tablist">
+          <span class="seg-ind"></span>
+          <button class="tab active" role="tab" onclick="switchTab('fixed',this)" data-hover>Sabit maaş</button>
+          <button class="tab" role="tab" onclick="switchTab('split',this)" data-hover>Ay ərzində dəyişib</button>
+        </div>
+
+        <div id="t-fixed">
+          <div class="field big uline">
+            <label for="gross">Hesablanmış əmək haqqı, AZN</label>
+            <input type="number" id="gross" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="calc()">
+            <span class="cur">₼</span>
+          </div>
+        </div>
+
+        <div id="t-split" style="display:none">
+          <div class="row">
+            <div class="field uline">
+              <label for="s1">1-ci dövr, AZN</label>
+              <input type="number" id="s1" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="calc()">
+              <span class="cur">₼</span>
+            </div>
+            <div class="field uline">
+              <label for="s2">2-ci dövr, AZN</label>
+              <input type="number" id="s2" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="calc()">
+              <span class="cur">₼</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field uline"><label for="sd1">1-ci dövrdə iş günləri</label><input type="number" id="sd1" placeholder="0" min="0" max="31" inputmode="numeric" oninput="calc()"></div>
+            <div class="field uline"><label for="sd2">2-ci dövrdə iş günləri</label><input type="number" id="sd2" placeholder="0" min="0" max="31" inputmode="numeric" oninput="calc()"></div>
+          </div>
+        </div>
+
+        <div class="chips">
+          <span class="chip"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span id="ch-h">159 iş saatı</span></span>
+          <span class="chip"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span id="ch-hol">2 bayram günü</span></span>
+          <span class="chip l"><svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>İllik norma: 1922 saat</span>
+        </div>
+      </div>
+
+      <div class="panel" data-reveal>
+        <div class="panel-h"><h3>Əlavə saatlar və mükafat</h3><span class="mono up">B / 03</span></div>
+        <div class="steps">
+          <div class="sr">
+            <div class="sr-nm">Aylıq iş saatı norması<small>Seçilmiş aya görə</small></div>
+            <div class="sc">
+              <button class="sb" onclick="stp('mh',-1)" aria-label="Azalt" data-hover>−</button>
+              <input type="number" id="mh" class="si" value="159" min="1" oninput="calc()" aria-label="Aylıq iş saatı norması">
+              <button class="sb" onclick="stp('mh',1)" aria-label="Artır" data-hover>+</button>
+            </div>
+          </div>
+          <div class="sr">
+            <div class="sr-nm">İş vaxtından artıq<span class="rt">×2</span><small>Normadan artıq saat · 06:00–20:00 daxil</small></div>
+            <div class="sc">
+              <button class="sb" onclick="stp('ot',-1)" aria-label="Azalt" data-hover>−</button>
+              <input type="number" id="ot" class="si" value="0" min="0" oninput="calc()" aria-label="İş vaxtından artıq saatlar">
+              <button class="sb" onclick="stp('ot',1)" aria-label="Artır" data-hover>+</button>
+            </div>
+          </div>
+          <div class="sr">
+            <div class="sr-nm">Axşam saatları<span class="rt">+20%</span><small>20:00–22:00 · artıq işin içində, ikiqatın üstünə</small></div>
+            <div class="sc">
+              <button class="sb" onclick="stp('ev',-1)" aria-label="Azalt" data-hover>−</button>
+              <input type="number" id="ev" class="si" value="0" min="0" oninput="calc()" aria-label="Axşam saatları">
+              <button class="sb" onclick="stp('ev',1)" aria-label="Artır" data-hover>+</button>
+            </div>
+          </div>
+          <div class="sr">
+            <div class="sr-nm">Gecə saatları<span class="rt">+40%</span><small>22:00–06:00 · artıq işin içində, ikiqatın üstünə</small></div>
+            <div class="sc">
+              <button class="sb" onclick="stp('nt',-1)" aria-label="Azalt" data-hover>−</button>
+              <input type="number" id="nt" class="si" value="0" min="0" oninput="calc()" aria-label="Gecə saatları">
+              <button class="sb" onclick="stp('nt',1)" aria-label="Artır" data-hover>+</button>
+            </div>
+          </div>
+          <p class="ot-note" id="ot-note" hidden>Axşam və gecə saatları artıq iş saatlarının içindədir. Onların cəmi artıq işdən çox ola bilməz.</p>
+          <div class="sr">
+            <div class="sr-nm">Bayram günləri<span class="rt">×2</span><small>Ayrı saatlar · artıq işə bir daha yazmayın</small></div>
+            <div class="sc">
+              <button class="sb" onclick="stp('bh',-1)" aria-label="Azalt" data-hover>−</button>
+              <input type="number" id="bh" class="si" value="0" min="0" oninput="calc()" aria-label="Bayram saatları">
+              <button class="sb" onclick="stp('bh',1)" aria-label="Artır" data-hover>+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field uline bonus">
+          <label for="bonus">Mükafat, AZN</label>
+          <input type="number" id="bonus" placeholder="0.00" step="0.01" min="0" inputmode="decimal" oninput="calc()">
+          <span class="cur">₼</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <aside class="res" data-reveal>
+      <div class="card" id="rcrd">
+        <div class="card-h mono up"><span>Nəticə</span><span class="live"><i></i>Aylıq</span></div>
+
+        <div id="rempty" class="empty">
+          <span class="star">✳</span>
+          <p>Nəticəni görmək üçün<br><em>əmək haqqını</em> daxil edin</p>
+          <span class="mono up">Hesablama avtomatik aparılır</span>
+        </div>
+
+        <div id="rdata" style="display:none">
+          <div class="net">
+            <div class="mono up">Ələ çatan məbləğ</div>
+            <div class="net-amt" id="r-net">0.00 <span>₼</span></div>
+            <div class="net-sub" id="r-sub"></div>
+            <div class="bar" aria-hidden="true">
+              <i class="c-net" id="b-net"></i><i class="c-dsmf" id="b-dsmf"></i><i class="c-un" id="b-un"></i><i class="c-its" id="b-its"></i><i class="c-pgv" id="b-pgv"></i>
+            </div>
+            <div class="legend"><span><i class="c-net"></i>Ələ çatan</span><span><i class="c-dsmf"></i>DSMF</span><span><i class="c-un"></i>İşsizlik</span><span><i class="c-its"></i>İTS</span><span><i class="c-pgv"></i>Gəlir vergisi</span></div>
+          </div>
+
+          <div class="bk">
+            <div class="bk-sec">Hesablanıb</div>
+            <div class="bk-row"><span class="bk-lbl">Əsas əmək haqqı</span><span class="bk-val" id="r-base">—</span></div>
+            <div class="bk-row" id="row-ot" style="display:none"><span class="bk-lbl">İş vaxtından artıq <span class="tag">×2</span></span><span class="bk-val pos" id="r-ot">—</span></div>
+            <div class="bk-row" id="row-ev" style="display:none"><span class="bk-lbl">Axşam saatları <span class="tag">+20%</span></span><span class="bk-val pos" id="r-ev">—</span></div>
+            <div class="bk-row" id="row-nt" style="display:none"><span class="bk-lbl">Gecə saatları <span class="tag">+40%</span></span><span class="bk-val pos" id="r-nt">—</span></div>
+            <div class="bk-row" id="row-bh" style="display:none"><span class="bk-lbl">Bayram günləri <span class="tag">×2</span></span><span class="bk-val pos" id="r-bh">—</span></div>
+            <div class="bk-row" id="row-bon" style="display:none"><span class="bk-lbl">Mükafat</span><span class="bk-val pos" id="r-bon">—</span></div>
+            <div class="bk-row bk-tot"><span class="bk-lbl">Cəmi hesablanıb</span><span class="bk-val" id="r-tg">—</span></div>
+
+            <div class="bk-sec">Tutulub</div>
+            <div class="bk-row"><span class="bk-lbl">DSMF <span class="tag">3%/10%</span></span><span class="bk-val neg" id="r-dsmf">—</span></div>
+            <div class="bk-row"><span class="bk-lbl">İşsizlikdən sığorta <span class="tag">0.5%</span></span><span class="bk-val neg" id="r-unemp">—</span></div>
+            <div class="bk-row"><span class="bk-lbl">İcbari tibbi sığorta <span class="tag">2%</span></span><span class="bk-val neg" id="r-its">—</span></div>
+            <div class="bk-row"><span class="bk-lbl">Gəlir vergisi <span class="tag">3–14%</span></span><span class="bk-val neg" id="r-pgv">—</span></div>
+            <div class="bk-row bk-tot"><span class="bk-lbl">Cəmi tutulub</span><span class="bk-val neg" id="r-td">—</span></div>
+          </div>
+
+          <div class="rates">
+            <div><span class="mono up">1 saat üçün</span><b id="r-hr">—</b></div>
+            <div><span class="mono up">1 gün üçün</span><b id="r-dy">—</b></div>
+          </div>
+        </div>
+      </div>
+      <p class="res-note"><span>✳</span>Gəlir vergisi hesablanarkən 200 AZN vergidən azad məbləğ çıxılır. Nəticələr təxminidir.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- ── 02 STORY ── -->
+<section class="story dark" id="story">
+  <div class="pad">
+    <div class="sec-top" data-reveal>
+      <span class="sec-sym">↘</span>
+      <span class="mini mono up">02 / Tutulmalar<br>Ətraflı</span>
+    </div>
+    <p class="manifest" data-words>Hesablanmış əmək haqqından hər ay <em>dörd</em> tutulma çıxılır. Qalan məbləğ <em>ələ çatan</em> maaşınızdır. Aşağıda hər tutulmanın məbləğini görə bilərsiniz.</p>
+  </div>
+
+  <div class="hs" id="hs">
+    <div class="hs-track" id="hs-track">
+      <div class="hs-card intro">
+        <span class="mono up" style="color:var(--soft)">Sürüşdürün →</span>
+        <div>
+          <h3>Maaşdan nə <em>tutulur?</em></h3>
+          <span class="example mono up" id="hs-note"><i></i>Nümunə: 1 000 AZN</span>
+        </div>
+      </div>
+      <article class="hs-card gross">
+        <span class="big-sym">₼</span>
+        <div class="top mono up"><span>01 / 06</span><span>Cəmi</span></div>
+        <div class="pct">100%</div>
+        <h3>Hesablanmış məbləğ</h3>
+        <div class="val" id="hs-gross">—</div>
+        <p>Əsas əmək haqqı, əlavə saatlar və mükafatın cəmi. Bütün tutulmalar bu məbləğdən hesablanır.</p>
+      </article>
+      <article class="hs-card">
+        <div class="top mono up"><span>02 / 06</span><span>Sosial sığorta</span></div>
+        <div class="pct">3<span style="font-size:.5em">/</span>10%</div>
+        <h3>DSMF</h3>
+        <div class="val" id="hs-dsmf">—</div>
+        <p>200 AZN-dək hissədən 3%, 200 AZN-dən yuxarı hissədən 10%.</p>
+        <div class="share"><i id="hs-dsmf-s"></i></div>
+      </article>
+      <article class="hs-card">
+        <div class="top mono up"><span>03 / 06</span><span>Sığorta</span></div>
+        <div class="pct">0.5%</div>
+        <h3>İşsizlikdən sığorta</h3>
+        <div class="val" id="hs-unemp">—</div>
+        <p>Hesablanmış məbləğin 0.5%-i.</p>
+        <div class="share"><i id="hs-unemp-s"></i></div>
+      </article>
+      <article class="hs-card">
+        <div class="top mono up"><span>04 / 06</span><span>Tibbi sığorta</span></div>
+        <div class="pct">2%</div>
+        <h3>İcbari tibbi sığorta</h3>
+        <div class="val" id="hs-its">—</div>
+        <p>8 000 AZN-dək hissədən 2%, 8 000 AZN-dən yuxarı hissədən 0.5%.</p>
+        <div class="share"><i id="hs-its-s"></i></div>
+      </article>
+      <article class="hs-card">
+        <div class="top mono up"><span>05 / 06</span><span>Vergi</span></div>
+        <div class="pct">3–14%</div>
+        <h3>Gəlir vergisi</h3>
+        <div class="val" id="hs-pgv">—</div>
+        <p>200 AZN vergidən azad məbləğ çıxıldıqdan sonra 3%, 10% və ya 14% dərəcə ilə.</p>
+        <div class="share"><i id="hs-pgv-s"></i></div>
+      </article>
+      <article class="hs-card net-c">
+        <span class="big-sym">✳</span>
+        <div class="top mono up"><span>06 / 06</span><span>Nəticə</span></div>
+        <div class="pct" id="hs-net-p">—</div>
+        <h3>Ələ çatan məbləğ</h3>
+        <div class="val" id="hs-net">—</div>
+        <p>Bütün tutulmalardan sonra kartınıza köçürülən məbləğ.</p>
+        <div class="share"><i id="hs-net-s"></i></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="marquee m2" aria-hidden="true"><div class="marquee-track" data-marquee="-1">
+  <span>Son 12 ay<b>✳</b>Orta gündəlik əmək haqqı<b>✳</b>÷ 30.4<b>✳</b>Ən azı 21 təqvim günü<b>✳</b><em>Məzuniyyət haqqı</em><b>✳</b></span>
+  <span>Son 12 ay<b>✳</b>Orta gündəlik əmək haqqı<b>✳</b>÷ 30.4<b>✳</b>Ən azı 21 təqvim günü<b>✳</b><em>Məzuniyyət haqqı</em><b>✳</b></span>
+</div></div>
+
+<!-- ── 03 VACATION ── -->
+<section class="sec pad" id="vacation">
+  <div class="sec-top" data-reveal>
+    <span class="sec-sym">↙</span>
+    <span class="mini mono up">03 / Məzuniyyət<br>Əmək Məcəlləsi</span>
+  </div>
+  <div class="heading">
+    <h2 data-split>Məzuniyyət <em>haqqı</em></h2>
+    <p data-reveal>Son 12 ayın orta gündəlik əmək haqqı məzuniyyət günlərinin sayına vurulur.</p>
+  </div>
+
+  <div class="vac">
+    <div class="vac-copy" data-reveal>
+      <p class="big-q">Məzuniyyət tarixlərini seçin — son 12 ay <em>avtomatik</em> göstəriləcək.</p>
+      <div class="formula">
+        <span class="mono up">Hesablama qaydası</span>
+        <p class="formula-eq"><b>Σ 12 ay</b> ÷ 12 ÷ <b>30.4</b> × <b>gün sayı</b></p>
+      </div>
+      <div class="note">Məzuniyyət haqqı = orta gündəlik əmək haqqı × məzuniyyət günlərinin sayı. Orta gündəlik əmək haqqı = son 12 ayın cəmi ÷ 12 ÷ 30.4. Əsas məzuniyyət ən azı 21 təqvim günüdür. Məzuniyyət haqqı məzuniyyət başlamazdan ən geci 3 gün əvvəl ödənilməlidir.</div>
+    </div>
+
+    <div class="panel" data-reveal style="margin-top:0">
+      <div class="panel-h"><h3>Məzuniyyət haqqı</h3><span class="mono up">C / 03</span></div>
+      <div class="field">
+        <span class="lbl">Məzuniyyət dövrü</span>
+        <div class="dr">
+          <div class="uline"><input type="date" id="vs" onchange="onVac()" aria-label="Başlanğıc tarixi"></div>
+          <div class="dr-arr">→</div>
+          <div class="uline"><input type="date" id="ve" onchange="onVac()" aria-label="Bitmə tarixi"></div>
+        </div>
+        <div class="dpill" id="dpill" style="display:none">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="dpill-t"></span>
+        </div>
+      </div>
+
+      <div id="vac-sec" style="display:none">
+        <span class="lbl" style="margin-top:14px" id="period-lbl">Son 12 ayın əmək haqqı</span>
+        <div class="qf">
+          <div class="uline"><input type="number" id="qf" placeholder="Bütün aylar üçün eyni məbləğ" step="0.01" min="0" inputmode="decimal" aria-label="Hamısı üçün məbləğ"></div>
+          <button class="btn magnetic" onclick="fillAll()" data-hover>Doldur <span>↓</span></button>
+        </div>
+        <div class="mg" id="mgrid"></div>
+        <div class="vr" id="vres" style="display:none">
+          <span class="sym">✳</span>
+          <div class="vr-row"><span>12 ayın cəmi</span><span id="vr-sum">—</span></div>
+          <div class="vr-row"><span>Orta aylıq</span><span id="vr-avg">—</span></div>
+          <div class="vr-row"><span>Orta gündəlik (÷ 30.4)</span><span id="vr-day">—</span></div>
+          <div class="vr-row"><span>Məzuniyyət günləri</span><span id="vr-days">—</span></div>
+          <div class="vr-row vr-tot"><span>Məzuniyyət haqqı</span><span id="vr-tot">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 YEAR & RULES ── -->
+<section class="sec pad" id="year" style="padding-top:40px">
+  <div class="sec-top" data-reveal>
+    <span class="sec-sym">↘</span>
+    <span class="mini mono up">04 / Dərəcələr<br>İş vaxtı norması 2026</span>
+  </div>
+  <div class="heading">
+    <h2 data-split>2026-cı ildə <em>1922</em> iş saatı</h2>
+    <p data-reveal>Hər ayın iş vaxtı norması. Aya klikləyin — kalkulyatorda həmin ay seçiləcək.</p>
+  </div>
+
+  <div class="year-wrap" data-reveal>
+    <div class="year-top mono up"><span>Aylıq iş saatı norması</span><span>✳ — bayram günləri</span></div>
+    <div class="bars" id="bars"></div>
+    <div class="year-foot"><span>Seçilmiş ay: <b id="yf-m">—</b></span><span>Ən çox: <b>İyul · 184 saat</b></span><span>Ən az: <b>Mart · 111 saat</b></span></div>
+  </div>
+
+  <div class="rules">
+    <div class="rules-copy" data-reveal>
+      <h3>Vergi və sığorta <em>dərəcələri</em></h3>
+      <p>Kalkulyatorda istifadə olunan bütün dərəcələr. Dərəcələr 2026-cı il üçündür.</p>
+    </div>
+    <div data-reveal>
+      <details open>
+        <summary data-hover><span class="mono">01</span>Gəlir vergisi<span class="pl">+</span></summary>
+        <div class="dc"><ul>
+          <li><span>2 500 AZN-dək</span><span>3%</span></li>
+          <li><span>2 500 – 8 000 AZN</span><span>75 AZN + 10%</span></li>
+          <li><span>8 000 AZN-dən çox</span><span>625 AZN + 14%</span></li>
+        </ul><p>Vergi tutulan məbləğ = hesablanmış əmək haqqı − 200 AZN. Faiz həddi aşan hissəyə tətbiq olunur.</p></div>
+      </details>
+      <details>
+        <summary data-hover><span class="mono">02</span>DSMF (işçi payı)<span class="pl">+</span></summary>
+        <div class="dc"><ul>
+          <li><span>200 AZN-dək</span><span>3%</span></li>
+          <li><span>200 AZN-dən çox hissə</span><span>10%</span></li>
+        </ul></div>
+      </details>
+      <details>
+        <summary data-hover><span class="mono">03</span>İşsizlikdən sığorta<span class="pl">+</span></summary>
+        <div class="dc"><ul><li><span>Hesablanmış məbləğ</span><span>0.5%</span></li></ul></div>
+      </details>
+      <details>
+        <summary data-hover><span class="mono">04</span>İcbari tibbi sığorta<span class="pl">+</span></summary>
+        <div class="dc"><ul>
+          <li><span>8 000 AZN-dək</span><span>2%</span></li>
+          <li><span>8 000 AZN-dən çox hissə</span><span>0.5%</span></li>
+        </ul></div>
+      </details>
+      <details>
+        <summary data-hover><span class="mono">05</span>Əlavə ödənişlər<span class="pl">+</span></summary>
+        <div class="dc"><ul>
+          <li><span>İş vaxtından artıq (06:00–20:00)</span><span>×2</span></li>
+          <li><span>Axşam (20:00–22:00)</span><span>×2 + 20%</span></li>
+          <li><span>Gecə (22:00–06:00)</span><span>×2 + 40%</span></li>
+          <li><span>Bayram günləri</span><span>×2</span></li>
+        </ul><p>Saatlıq tarif = əsas əmək haqqı ÷ aylıq norma. Normadan artıq hər saat tarifin 2 misli ilə aylıq maaşa əlavə olunur. 20% və 40% ikiqat artırılmır: onlar ilkin tarifə əlavədir. Axşam və gecə saatlarını artıq işin içində sayın, ayrıca ×2 yazmayın.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ── CLOSING ── -->
+<section class="closing dark pad">
+  <span class="ast" id="ast">✳</span>
+  <h2 data-split>Yenidən <em>hesablayın</em></h2>
+  <div class="closing-bottom">
+    <p>Bütün hesablamalar brauzerinizdə aparılır. Daxil etdiyiniz məlumatlar heç yerdə saxlanılmır və heç kimə göndərilmir.</p>
+    <a class="round-link" href="#calc" data-hover><span class="round-arrow">↑</span>Kalkulyatora qayıdın</a>
+  </div>
+</section>
+
+<footer class="foot dark pad">
+  <div class="foot-meta mono up">
+    <span>Əmək haqqı kalkulyatoru</span>
+    <span>Azərbaycan · 2026</span>
+    <span>© <span id="year-n">2026</span></span>
+  </div>
+  <div class="wordmark" aria-hidden="true">Əmək haqqı<span>✳</span></div>
+  <div class="foot-bottom"><span>Nəticələr təxminidir və məlumat xarakteri daşıyır.</span><a href="#top" data-hover>Yuxarı ↑</a></div>
+</footer>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><i></i><span id="toast-t"></span></div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+/* ════════ Calculator logic ════════ */
+const CAL = [
+  {n:'Yanvar',  h:151,hol:3},  {n:'Fevral',  h:160,hol:0},
+  {n:'Mart',    h:111,hol:6},  {n:'Aprel',   h:176,hol:0},
+  {n:'May',     h:134,hol:4},  {n:'İyun',    h:159,hol:2},
+  {n:'İyul',    h:184,hol:0},  {n:'Avqust',  h:168,hol:0},
+  {n:'Sentyabr',h:176,hol:0},  {n:'Oktyabr', h:176,hol:0},
+  {n:'Noyabr',  h:152,hol:2},  {n:'Dekabr',  h:175,hol:1},
+];
+const MN = CAL.map(c=>c.n);
+let activeTab = 'fixed';
+const REDUCED = document.documentElement.dataset.motion==='reduced';
+const $ = id => document.getElementById(id);
+
+const pgv  = g => g<=0?0: g<=2500?g*.03: g<=8000?75+(g-2500)*.1: 625+(g-8000)*.14;
+const dsmf = g => g<=0?0: g<=200?g*.03: 6+(g-200)*.1;
+const unemp= g => g*.005;
+const its  = g => g<=0?0: g<=8000?g*.02: 160+(g-8000)*.005;
+const fmt  = v => v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).replace(/,/g,' ');
+const f    = v => fmt(v)+' ₼';
+
+function breakdown(tg){
+  const d=dsmf(tg), u=unemp(tg), t=its(tg), p=pgv(Math.max(0,tg-200));
+  const td=d+u+t+p;
+  return {tg,d,u,t,p,td,net:tg-td};
+}
+
+function switchTab(t,btn){
+  activeTab=t;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  $('seg').dataset.tab=t;
+  $('t-fixed').style.display=t==='fixed'?'block':'none';
+  $('t-split').style.display=t==='split'?'block':'none';
+  calc();
+}
+
+function onMonth(){
+  const i=+$('month').value, m=CAL[i];
+  $('ch-h').textContent=m.h+' iş saatı';
+  $('ch-hol').textContent=m.hol+' bayram günü';
+  $('mh').value=m.h;
+  document.querySelectorAll('.bar-m').forEach((b,j)=>b.classList.toggle('sel',j===i));
+  if($('yf-m')) $('yf-m').textContent=`${m.n} · ${m.h} saat`;
+  calc();
+}
+
+function stp(id,d){
+  const el=$(id);
+  el.value=Math.max(0,(parseInt(el.value)||0)+d);
+  calc();
+}
+
+const nv=id=>parseFloat($(id).value)||0;
+const iv=id=>parseInt($(id).value)||0;
+
+function getBase(){
+  if(activeTab==='fixed') return nv('gross');
+  const g1=nv('s1'),g2=nv('s2'),d1=nv('sd1'),d2=nv('sd2');
+  const tot=d1+d2; if(!tot) return 0;
+  const wd=Math.max(1,CAL[+$('month').value].h/8);
+  return (g1/wd*d1)+(g2/wd*d2);
+}
+
+function showRow(rid,vid,val){
+  const r=$(rid);
+  if(val>0.005){r.style.display='flex';$(vid).textContent='+'+f(val);}
+  else r.style.display='none';
+}
+
+const netState={v:0};
+function setNet(v){
+  const el=$('r-net');
+  const paint=x=>el.innerHTML=fmt(x)+' <span>₼</span>';
+  if(window.gsap && !REDUCED){gsap.to(netState,{v,duration:.9,ease:'expo.out',overwrite:true,onUpdate:()=>paint(netState.v)});}
+  else {netState.v=v;paint(v);}
+}
+
+function setBar(r){
+  const tg=r.tg||1;
+  [['b-net',r.net],['b-dsmf',r.d],['b-un',r.u],['b-its',r.t],['b-pgv',r.p]].forEach(([id,v])=>$(id).style.flexGrow=(v/tg).toFixed(4));
+}
+
+function updateStory(r,isExample){
+  $('hs-note').innerHTML = isExample ? '<i></i>Nümunə: 1 000 AZN' : '<i></i>Sizin məbləğ · '+f(r.tg);
+  $('hs-gross').textContent=f(r.tg);
+  $('hs-dsmf').textContent='−'+f(r.d);
+  $('hs-unemp').textContent='−'+f(r.u);
+  $('hs-its').textContent='−'+f(r.t);
+  $('hs-pgv').textContent='−'+f(r.p);
+  $('hs-net').textContent=f(r.net);
+  $('hs-net-p').textContent=Math.round(r.net/r.tg*100)+'%';
+  const s=(id,v)=>$(id).style.transform=`scaleX(${Math.min(1,v/r.tg*(id==='hs-net-s'?1:4))})`;
+  s('hs-dsmf-s',r.d);s('hs-unemp-s',r.u);s('hs-its-s',r.t);s('hs-pgv-s',r.p);s('hs-net-s',r.net);
+}
+
+let wasEmpty=true;
+function calc(){
+  const ot=iv('ot'), ev=iv('ev'), nt=iv('nt');
+  $('ot-note').hidden = ev + nt <= ot;
+  const base=getBase();
+  if(base<=0){
+    $('rempty').style.display='block';
+    $('rdata').style.display='none';
+    wasEmpty=true;
+    updateStory(breakdown(1000),true);
+    return;
+  }
+  const mh=Math.max(1,iv('mh'));
+  const hr=base/mh;
+  // Artıq iş: tarif × 2, maaşa əlavə. 20% və 40% ilkin tarifdəndir, ikiqat artırılmır.
+  const otP=ot*hr*2, evP=ev*hr*.2, ntP=nt*hr*.4, bhP=iv('bh')*hr*2;
+  const bon=nv('bonus');
+  const r=breakdown(base+otP+ntP+evP+bhP+bon);
+
+  $('rempty').style.display='none';
+  $('rdata').style.display='block';
+  if(wasEmpty && window.gsap && !REDUCED){
+    gsap.fromTo('#rdata .net > *, #rdata .bk-row, #rdata .bk-sec, #rdata .rates > div',{y:14,opacity:0},{y:0,opacity:1,duration:.7,stagger:.025,ease:'power3.out'});
+  }
+  wasEmpty=false;
+  setNet(r.net);
+  $('r-sub').innerHTML='Hesablanıb: <b>'+f(r.tg)+'</b> · Tutulub: '+Math.round(r.td/r.tg*100)+'%';
+  $('r-base').textContent=f(base);
+  showRow('row-ot','r-ot',otP);
+  showRow('row-nt','r-nt',ntP);
+  showRow('row-ev','r-ev',evP);
+  showRow('row-bh','r-bh',bhP);
+  showRow('row-bon','r-bon',bon);
+  $('r-tg').textContent=f(r.tg);
+  $('r-dsmf').textContent='−'+f(r.d);
+  $('r-unemp').textContent='−'+f(r.u);
+  $('r-its').textContent='−'+f(r.t);
+  $('r-pgv').textContent='−'+f(r.p);
+  $('r-td').textContent='−'+f(r.td);
+  $('r-hr').textContent=f(r.net/mh);
+  $('r-dy').textContent=f(r.net/(mh/8));
+  setBar(r);
+  updateStory(r,false);
+}
+
+/* ── Vacation ── */
+function onVac(){
+  const sv=$('vs').value, ev=$('ve').value;
+  if(!sv) return;
+  const sd=new Date(sv), ed=ev?new Date(ev):null;
+  const pill=$('dpill');
+  if(ed&&ed>=sd){
+    const days=Math.round((ed-sd)/864e5)+1;
+    pill.style.display='inline-flex';pill.classList.add('on');
+    $('dpill-t').textContent=days+' təqvim günü';
+  } else {
+    pill.classList.remove('on');
+    pill.style.display=ev?'inline-flex':'none';
+    if(ev) $('dpill-t').textContent='Tarixlər səhvdir';
+  }
+  const wasHidden=$('vac-sec').style.display==='none';
+  $('vac-sec').style.display='block';
+  buildGrid(sd);
+  calcVac();
+  if(wasHidden && window.gsap && !REDUCED){
+    gsap.from('#mgrid .mi',{y:16,opacity:0,duration:.6,stagger:.03,ease:'power3.out'});
+    window.ScrollTrigger && ScrollTrigger.refresh();
+  }
+}
+
+function buildGrid(vacStart){
+  const grid=$('mgrid');
+  grid.innerHTML='';
+  const ref=new Date(vacStart.getFullYear(),vacStart.getMonth()-1,1);
+  const months=[];
+  for(let i=11;i>=0;i--){
+    const d=new Date(ref.getFullYear(),ref.getMonth()-i,1);
+    months.push({y:d.getFullYear(),m:d.getMonth()});
+  }
+  const fl=months[0],ll=months[11];
+  $('period-lbl').textContent=`${MN[fl.m]} ${fl.y} – ${MN[ll.m]} ${ll.y}`;
+  const pre=nv('gross');
+  if(pre>0) $('qf').value=pre.toFixed(2);
+  months.forEach((mo,i)=>{
+    const w=document.createElement('div');w.className='mi uline';
+    const lb=document.createElement('label');lb.textContent=`${MN[mo.m]} ${mo.y}`;lb.htmlFor=`vm${i}`;
+    const inp=document.createElement('input');
+    inp.type='number';inp.id=`vm${i}`;inp.placeholder='0.00';inp.step='0.01';inp.min='0';inp.inputMode='decimal';
+    if(pre>0) inp.value=pre.toFixed(2);
+    inp.oninput=calcVac;
+    w.append(lb,inp);grid.appendChild(w);
+  });
+  calcVac();
+}
+
+function fillAll(){
+  const v=nv('qf');
+  for(let i=0;i<12;i++){const el=$(`vm${i}`);if(el)el.value=v>0?v.toFixed(2):'';}
+  calcVac();
+}
+
+function calcVac(){
+  const sv=$('vs').value,ev=$('ve').value;
+  const res=$('vres');
+  if(!sv||!ev){res.style.display='none';return;}
+  const sd=new Date(sv),ed=new Date(ev);
+  if(ed<sd){res.style.display='none';return;}
+  const days=Math.round((ed-sd)/864e5)+1;
+  let sum=0;
+  for(let i=0;i<12;i++){const el=$(`vm${i}`);sum+=el?parseFloat(el.value)||0:0;}
+  if(!sum){res.style.display='none';return;}
+  const avg=sum/12,daily=avg/30.4,total=daily*days;
+  const wasHidden=res.style.display==='none';
+  res.style.display='block';
+  $('vr-sum').textContent=f(sum);
+  $('vr-avg').textContent=f(avg);
+  $('vr-day').textContent=f(daily);
+  $('vr-days').textContent=days+' gün';
+  $('vr-tot').textContent=f(total);
+  if(wasHidden && window.gsap && !REDUCED){
+    gsap.fromTo(res,{clipPath:'inset(0 0 100% 0)'},{clipPath:'inset(0 0 0% 0)',duration:.9,ease:'expo.out'});
+    window.ScrollTrigger && ScrollTrigger.refresh();
+  }
+}
+
+/* ── Year bars ── */
+let toastT;
+function toast(msg){
+  $('toast-t').textContent=msg;
+  $('toast').classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>$('toast').classList.remove('show'),2200);
+}
+function buildBars(){
+  const max=Math.max(...CAL.map(c=>c.h));
+  $('bars').innerHTML=CAL.map((c,i)=>`
+    <button class="bar-m" data-i="${i}" data-hover aria-label="${c.n}, ${c.h} saat">
+      <span class="trk"><span class="col" style="--h:${(c.h/max*100).toFixed(1)}%"><span class="h">${c.h}</span>${c.hol?`<span class="hol">✳${c.hol}</span>`:''}</span></span>
+      <span class="n">${c.n.slice(0,3)}</span>
+    </button>`).join('');
+  $('bars').addEventListener('click',e=>{
+    const b=e.target.closest('.bar-m'); if(!b) return;
+    $('month').value=b.dataset.i; onMonth();
+    toast(`${CAL[b.dataset.i].n} seçildi — ${CAL[b.dataset.i].h} saat`);
+  });
+}
+
+/* ── Init ── */
+(function(){
+  buildBars();
+  const now=new Date();
+  $('month').value=now.getMonth();
+  onMonth();
+  $('vs').value=now.toISOString().split('T')[0];
+  $('year-n').textContent=now.getFullYear();
+})();
+
+/* ════════ Motion ════════ */
+(function(){
+  const loader=$('loader');
+  const hasGsap=!!(window.gsap&&window.ScrollTrigger);
+  if(!hasGsap||REDUCED){ if(loader) loader.remove(); initMarqueeFallback(); return; }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* Smooth scroll */
+  let lenis=null;
+  if(window.Lenis){
+    lenis=new Lenis({duration:1.15,easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)),smoothWheel:true});
+    lenis.on('scroll',ScrollTrigger.update);
+    gsap.ticker.add(t=>lenis.raf(t*1000));
+    gsap.ticker.lagSmoothing(0);
+    lenis.stop();
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+    const id=a.getAttribute('href'); const t=id==='#top'?0:document.querySelector(id);
+    if(t===null) return;
+    e.preventDefault();
+    lenis?lenis.scrollTo(t,{offset:id==='#top'?0:-20,duration:1.6}):window.scrollTo({top:t?t.offsetTop:0,behavior:'smooth'});
+  }));
+
+  /* Split helpers */
+  function splitWords(el,inner){
+    const walk=node=>{
+      [...node.childNodes].forEach(n=>{
+        if(n.nodeType===3){
+          const frag=document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach(w=>{
+            if(!w) return;
+            if(/^\s+$/.test(w)){frag.append(document.createTextNode(w));return;}
+            const s=document.createElement('span');
+            if(inner){s.className='split-w';const i=document.createElement('span');i.textContent=w;s.append(i);}
+            else{s.className='word';s.textContent=w;}
+            frag.append(s);
+          });
+          n.replaceWith(frag);
+        } else if(n.nodeType===1) walk(n);
+      });
+    };
+    walk(el);
+  }
+
+  /* Preloader → hero intro */
+  const tl=gsap.timeline();
+  const cnt={v:0};
+  gsap.set('.hero h1 .ln>span',{yPercent:110});
+  gsap.set('[data-hero-fade]',{y:30,opacity:0});
+  gsap.set('.hero-art',{opacity:0,scale:.9});
+  gsap.set('.hero h1 em',{'--u':0});
+  tl.to(cnt,{v:100,duration:1.3,ease:'power2.inOut',onUpdate:()=>{$('ld-n').textContent=String(Math.round(cnt.v)).padStart(3,'0');}})
+    .to('#ld-bar',{scaleX:1,duration:1.3,ease:'power2.inOut'},0)
+    .to(loader,{clipPath:'inset(0 0 100% 0)',duration:1,ease:'expo.inOut'},'+=.1')
+    .add(()=>{loader.remove();lenis&&lenis.start();},'-=.1')
+    .to('.hero h1 .ln>span',{yPercent:0,duration:1.4,stagger:.12,ease:'expo.out'},'-=.55')
+    .to('.hero h1 em',{'--u':1,duration:1,ease:'expo.out'},'-=.8')
+    .to('.hero-art',{opacity:1,scale:1,duration:1.6,ease:'expo.out'},'-=1.3')
+    .to('[data-hero-fade]',{y:0,opacity:1,duration:1,stagger:.1,ease:'expo.out'},'-=1.3');
+  loader.style.clipPath='inset(0 0 0% 0)';
+
+  /* Orbiting chips */
+  const chips=[...document.querySelectorAll('.chip-orb')];
+  const art=$('hero-art');
+  const orbit={t:0};
+  gsap.ticker.add((time)=>{
+    const w=art.clientWidth,h=art.clientHeight;
+    const rx=w*.39, ry=h*.34;
+    chips.forEach((c,i)=>{
+      const a=time*.18+i*(Math.PI*2/chips.length);
+      const x=Math.cos(a)*rx, y=Math.sin(a)*ry*.8;
+      const z=(Math.sin(a)+1)/2;
+      c.style.transform=`translate(-50%,-50%) translate(${x}px,${y}px) scale(${.82+z*.3})`;
+      c.style.zIndex=z>.5?3:0;
+    });
+  });
+
+  /* Mouse parallax on hero art */
+  const layers=[...document.querySelectorAll('[data-depth]')].map(el=>({d:+el.dataset.depth,x:gsap.quickTo(el,'x',{duration:1.2,ease:'expo.out'}),y:gsap.quickTo(el,'y',{duration:1.2,ease:'expo.out'})}));
+  window.addEventListener('mousemove',e=>{
+    const nx=e.clientX/innerWidth-.5, ny=e.clientY/innerHeight-.5;
+    layers.forEach(l=>{l.x(nx*40*l.d);l.y(ny*40*l.d);});
+  });
+
+  /* Hero scroll-out */
+  gsap.to('.hero-copy',{yPercent:-18,opacity:.2,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+  gsap.to('#coin',{rotate:140,scale:.8,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+
+  /* Marquee with scroll velocity */
+  const marquees=[...document.querySelectorAll('[data-marquee]')].map(el=>({el,dir:+el.dataset.marquee,x:0}));
+  let vel=0;
+  if(lenis) lenis.on('scroll',e=>{vel=e.velocity||0;});
+  gsap.ticker.add((t,dt)=>{
+    const boost=1+Math.min(8,Math.abs(vel)*.35);
+    marquees.forEach(m=>{
+      const half=m.el.scrollWidth/2;
+      m.x-=m.dir*(dt*.06)*boost*(vel<0?-1:1);
+      if(m.x<=-half) m.x+=half; if(m.x>0) m.x-=half;
+      m.el.style.transform=`translate3d(${m.x}px,0,0)`;
+    });
+    vel*=.92;
+  });
+
+  /* Header hide / progress */
+  const hdr=$('hdr');let lastY=0;
+  ScrollTrigger.create({start:0,end:'max',onUpdate:self=>{
+    const y=self.scroll();
+    hdr.classList.toggle('scrolled',y>40);
+    hdr.classList.toggle('hide',y>lastY&&y>400);
+    lastY=y;
+    $('progress').style.transform=`scaleX(${self.progress})`;
+  }});
+
+  /* Split headings */
+  document.querySelectorAll('[data-split]').forEach(el=>{
+    splitWords(el,true);
+    gsap.from(el.querySelectorAll('.split-w>span'),{yPercent:110,rotate:4,duration:1.2,stagger:.06,ease:'expo.out',scrollTrigger:{trigger:el,start:'top 85%'}});
+  });
+
+  /* Reveal blocks */
+  document.querySelectorAll('[data-reveal]').forEach(el=>{
+    gsap.from(el,{y:50,opacity:0,duration:1.2,ease:'expo.out',scrollTrigger:{trigger:el,start:'top 88%'}});
+  });
+
+  /* Step rows stagger */
+  gsap.from('.sr',{x:-30,opacity:0,duration:.9,stagger:.07,ease:'expo.out',scrollTrigger:{trigger:'.steps',start:'top 85%'}});
+
+  /* Manifest word scrub */
+  const man=document.querySelector('[data-words]');
+  splitWords(man,false);
+  gsap.to(man.querySelectorAll('.word'),{opacity:1,stagger:.1,ease:'none',scrollTrigger:{trigger:man,start:'top 80%',end:'bottom 45%',scrub:true}});
+
+  /* Horizontal story */
+  const mm=gsap.matchMedia();
+  mm.add('(min-width: 901px)',()=>{
+    const track=$('hs-track');
+    const dist=()=>track.scrollWidth-innerWidth;
+    const tween=gsap.to(track,{x:()=>-dist(),ease:'none',scrollTrigger:{trigger:'#hs',start:'top top',end:()=>'+='+dist(),pin:true,scrub:1,invalidateOnRefresh:true,anticipatePin:1}});
+    track.querySelectorAll('.hs-card:not(.intro)').forEach(card=>{
+      gsap.from(card.querySelector('.pct'),{yPercent:60,opacity:0,ease:'power2.out',scrollTrigger:{trigger:card,containerAnimation:tween,start:'left 95%',end:'left 55%',scrub:true}});
+      gsap.fromTo(card,{rotate:4,y:40},{rotate:0,y:0,ease:'none',scrollTrigger:{trigger:card,containerAnimation:tween,start:'left 100%',end:'left 60%',scrub:true}});
+    });
+  });
+  mm.add('(max-width: 900px)',()=>{
+    document.querySelectorAll('.hs-card:not(.intro)').forEach(card=>{
+      gsap.from(card,{y:60,opacity:0,duration:1,ease:'expo.out',scrollTrigger:{trigger:card,start:'top 90%'}});
+    });
+  });
+
+  /* Year bars grow */
+  gsap.from('.bar-m .col',{scaleY:0,duration:1.4,stagger:.05,ease:'expo.out',scrollTrigger:{trigger:'#bars',start:'top 80%'}});
+  gsap.from('.bar-m .h',{opacity:0,y:10,duration:.8,stagger:.05,delay:.4,ease:'power3.out',scrollTrigger:{trigger:'#bars',start:'top 80%'}});
+
+  /* Closing */
+  gsap.from('#ast',{rotate:-180,scale:.3,opacity:0,duration:1.6,ease:'expo.out',scrollTrigger:{trigger:'.closing',start:'top 75%'}});
+  gsap.to('#ast',{rotate:360,ease:'none',scrollTrigger:{trigger:'.closing',start:'top bottom',end:'bottom top',scrub:true}});
+  gsap.from('.wordmark',{yPercent:40,opacity:0,duration:1.4,ease:'expo.out',scrollTrigger:{trigger:'.foot',start:'top 90%'}});
+
+  /* Magnetic */
+  if(matchMedia('(pointer:fine)').matches){
+    document.querySelectorAll('.magnetic,.round-arrow').forEach(el=>{
+      const qx=gsap.quickTo(el,'x',{duration:.6,ease:'expo.out'}),qy=gsap.quickTo(el,'y',{duration:.6,ease:'expo.out'});
+      el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect();qx((e.clientX-r.left-r.width/2)*.35);qy((e.clientY-r.top-r.height/2)*.35);});
+      el.addEventListener('mouseleave',()=>{qx(0);qy(0);});
+    });
+
+    /* Cursor */
+    const cur=$('cursor'),dot=$('cursor-dot');
+    const cx=gsap.quickTo(cur,'x',{duration:.5,ease:'expo.out'}),cy=gsap.quickTo(cur,'y',{duration:.5,ease:'expo.out'});
+    const dx=gsap.quickTo(dot,'x',{duration:.08}),dy=gsap.quickTo(dot,'y',{duration:.08});
+    let shown=false;
+    window.addEventListener('mousemove',e=>{
+      if(!shown){gsap.to([cur,dot],{opacity:1,duration:.3});shown=true;}
+      cx(e.clientX);cy(e.clientY);dx(e.clientX);dy(e.clientY);
+      const t=e.target;
+      const onDark=!!t.closest('.dark,.card,.loader');
+      cur.classList.toggle('on-dark',onDark);dot.classList.toggle('on-dark',onDark);
+      cur.classList.toggle('is-hover',!!t.closest('[data-hover],a,button,summary'));
+      const typing=!!t.closest('input,select');
+      cur.classList.toggle('is-hidden',typing);dot.classList.toggle('is-hidden',typing);
+    });
+    document.addEventListener('mouseleave',()=>gsap.to([cur,dot],{opacity:0,duration:.3,onComplete:()=>shown=false}));
+  }
+
+  window.addEventListener('load',()=>ScrollTrigger.refresh());
+})();
+
+function initMarqueeFallback(){
+  document.querySelectorAll('[data-marquee]').forEach(el=>{
+    const dir=+el.dataset.marquee;
+    el.animate([{transform:'translateX(0)'},{transform:`translateX(${dir>0?'-50%':'50%'})`}],{duration:36000,iterations:Infinity});
+    if(dir<0) el.style.marginLeft='-100%';
+  });
+  if(REDUCED) document.querySelectorAll('[data-marquee]').forEach(el=>el.getAnimations().forEach(a=>a.cancel()));
+}
+</script>
+</body>
+</html>
